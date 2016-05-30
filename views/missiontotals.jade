@@ -1,0 +1,72 @@
+extends layout
+
+block title
+	h1(class="nobreak") Mission Totals
+
+
+	- var fullMonth = function(date){
+		- if(date.getMonth() == 0){
+			- return "Jan";
+		- }else if(date.getMonth() == 1){
+			- return "Feb";
+		- }else if(date.getMonth() == 2){
+			- return "Mar";
+		- }else if(date.getMonth() == 3){
+			- return "Apr";
+		- }else if(date.getMonth() == 4){
+			- return "May";
+		- }else if(date.getMonth() == 5){
+			- return "Jun";
+		- }else if(date.getMonth() == 6){
+			- return "Jul";
+		- }else if(date.getMonth() == 7){
+			- return "Aug";
+		- }else if(date.getMonth() == 8){
+			- return "Sep";
+		- }else if(date.getMonth() == 9){
+			- return "Oct";
+		- }else if(date.getMonth() == 10){
+			- return "Nov";
+		- }else if(date.getMonth() == 11){
+			- return "Dec";
+		- }
+	-}
+	h2(class="nobreak")=""+start.getDate().toString()+"-"+fullMonth(start).toString()+"-"+start.getFullYear().toString()+" to "+end.getDate().toString()+"-"+fullMonth(end)+"-"+end.getFullYear().toString()
+
+block content
+	table(class="table table-hover")
+		thead
+			tr
+				th Week
+				- for(var i = 0; i < config.length; i++){
+				th=config[i].name
+				- }
+		tbody
+			- for(var i = 0; i < totals.length; i++){
+			tr
+				td="Week "+(i+1)
+				- for(var j = 0; j < config.length; j++){
+				td=totals[i][config[j]['shortname']]
+				- }
+			- }
+	//Now for the zones...
+	- for (zone in report){
+	h3
+		a(class="captialize header-link" href="/zone/"+zone)=zone.toLowerCase()
+	h4(class="nobreak")=""+start.getDate().toString()+"-"+fullMonth(start).toString()+"-"+start.getFullYear().toString()+" to "+end.getDate().toString()+"-"+fullMonth(end)+"-"+end.getFullYear().toString()
+	table(class="table table-hover")
+		thead
+			tr
+				th Week
+				- for(var i = 0; i < config.length; i++){
+				th=config[i].name
+				- }
+		tbody
+			- for(var i = 0; i < report[zone].length; i++){
+			tr
+				td="Week "+(i+1)
+				- for(var j = 0; j < config.length; j++){
+				td=report[zone][i][config[j]['shortname']]
+				- }
+			- }
+	-}

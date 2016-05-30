@@ -1,0 +1,35 @@
+extends layout
+
+block title
+	h1 Reports
+
+block content
+	h2 Add/Modify Report
+	form(class="form-horizontal", action="/reports", method="get")
+		div(class="form-group")
+			label(for="phone" class="col-sm-2 control-label") Phone
+			div(class="col-sm-10")
+				input(list="phones" name="phone" class="form-control" required)
+				datalist(id="phones")
+					- for(var i = 0; i < phones.length; i++){
+					option(value=""+phones[i])
+					- }
+		div(class="form-group")
+			label(for="$" class="col-sm-2 control-label") Submission Date (Monday report should have been submitted)
+			div(class="col-sm-10")
+				input(name="$" type="date" class="form-control" required)
+		- for(var i = 0; i < config.length; i++){
+		div(class="form-group")
+			label(for=config[i].shortname class="col-sm-2 control-label")=config[i].name+""
+			div(class="col-sm-10")
+				input(name=config[i].shortname min="0" type="number" value="0" class="form-control" required)
+		- }
+		div(class="form-group")
+			label(for=miles class="col-sm-2 control-label") Miles
+			div(class="col-sm-10")
+				input(name=miles min="0" type="number" value="0" class="form-control" required)
+		div(class="form-group")
+			div(class="col-sm-2")
+			div(class="col-sm-10")
+				input(class="btn btn-primary" type="submit")
+				

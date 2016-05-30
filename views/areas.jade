@@ -1,0 +1,24 @@
+extends layout
+
+block title
+	h1
+		a(class="header-link" href="/missiontotals") Mission Totals
+
+block content
+	- Object.keys(areas).forEach(function(zone, index) {
+	//Verify that this isn't the office
+	- if(zone != 'MISSION OFFICE'){
+	h2
+		a(class="captialize header-link" href="/zone/"+zone)=zone.toLowerCase()
+	- Object.keys(areas[zone]).forEach(function(district, index) {
+	div(class="panel panel-default")
+		div(class="panel-heading")
+			a(href="/district/"+district.replace('/', '-') class="header-link captialize")=district.toLowerCase()
+		div(class="panel-content")
+		div(class="list-group")
+		- Object.keys(areas[zone][district]).forEach(function(area, index) {
+			a(href="/areas/"+area.replace('/', '-') class="list-group-item captialize")=area.toLowerCase()
+		- });
+	- });
+	- }
+	- });
