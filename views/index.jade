@@ -1,0 +1,34 @@
+extends layout
+
+block title
+	h1=title
+
+block content
+	blockquote  "When performance is measured, performance improves. When performance is measured and reported, the rate of improvement accelerates."
+		a(href="https://www.lds.org/manual/preach-my-gospel-a-guide-to-missionary-service/how-do-i-use-time-wisely?lang=eng") 
+			em Preach My Gospel, Chapter 8
+	
+	p Winston is the new medium for reporting numbers in the Colorado Denver South Mission.  Based on Skynet, it too is a texting based system that has been implemented to increase efficiency in creating accountability reports.  The phone number for Winston is: (720) 675 – 7146.  
+		strong Be sure to also submit your numbers report through the missionary portal.
+
+	h3(class="nobreak") Reporting Format
+	
+	p Please be sure to enter in a return after each item in your report. This can be done by pressing enter.  Key indicators must be sent in by Monday morning before 9:15am.
+	p We track the following key indicators, represented by the following in your text:
+	
+	ul
+		- format.forEach(function(currentValue, index, array){
+		li=currentValue.shortname+' ('+currentValue.name+')'
+		- })
+
+	h3(class="nobreak") Reminders
+	
+	ul
+		li Please be sure to enter in a return after each item in your report. This can be done by pressing enter on the new phones, or down on the older phones.
+		li For the definitions of the key indicators, refer to page 138 of 
+			em Preach My Gospel.
+		li If you cannot text in your reports for whatever reason, call the Assistants and they will manually enter in your reports. 
+		li Reports are not case sensitive. 
+		li Make sure that you put a colon (:) between the key and the value you are reporting.
+		li If you don’t have a car, enter 0 for miles.
+		li Winston may get sassy if he cannot process your report.
