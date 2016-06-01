@@ -46,9 +46,10 @@ block content
 			tr
 				td="Week "+(i+1)
 				- for(var j = 0; j < config.length; j++){
-				td=totals[i][config[j]['shortname']]
+				td=totals[i][config[j]['shortname']]+' ('+Math.round((totals[i][config[j]['shortname']]/numComps[i].totals)*100)/100+')'
 				- }
 			- }
+
 	//Now for the zones...
 	- for (zone in report){
 	h3
@@ -66,7 +67,7 @@ block content
 			tr
 				td="Week "+(i+1)
 				- for(var j = 0; j < config.length; j++){
-				td=report[zone][i][config[j]['shortname']]
+				td=report[zone][i][config[j]['shortname']]+' ('+Math.round((report[zone][i][config[j]['shortname']]/numComps[i][zone])*100)/100+')'
 				- }
 			- }
 	-}

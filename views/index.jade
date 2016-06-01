@@ -17,9 +17,10 @@ block content
 	p We track the following key indicators, represented by the following in your text:
 	
 	ul
-		- format.forEach(function(currentValue, index, array){
-		li=currentValue.shortname+' ('+currentValue.name+')'
-		- })
+		- for(var i = 0; i < format.length; i++){
+		li=format[i].shortname+' ('+format[i].name+')'
+		- }
+		li miles (Ending Odometer)
 
 	h3(class="nobreak") Reminders
 	

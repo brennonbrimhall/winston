@@ -40,7 +40,8 @@ var imap = {
 var n = notifier(imap);
 n.on('end', function(){
 	n.start();
-}).on('mail', function(mail){ 	
+}).on('mail', function(mail){
+	console.log('Mail recieved from '+mail.from[0].name);
 	//This is the magic that will take texts and then download them.
 	
 	//Verify that this is a Text Message coming in as an email.  We
@@ -70,19 +71,23 @@ n.on('end', function(){
 			var report = {};
 			text = text.split('\n'); //Splitting into array based off of newline
 
+			console.log(text);
 			
 			text.forEach(function(currentValue, index, array){
-
 				if(currentValue.split(':').length == 2){
 					//If we have a line with no semicolons or too many, ignore.
 					var indicator = currentValue.split(':')[0].toLowerCase();
 					var value = parseInt(currentValue.split(':')[1]);
 					report[indicator] = value;
+				}else{
+					console.log('Too little/many semicolons')
 				}
 			});
 
 			//Validate that we got all the indicators we wanted
-			var reportConfig = require('./weeklyreports/config.json');
+			var dynamicRequire = require('./helpers/dynamicRequire.js');
+			console.log('Required dynamicRequire:'+dynamicRequire);
+			var reportConfig = dynamicRequire.read('../weeklyreports/config.json');
 
 			//Add in miles (it's special and so we don't want it in config)
 			reportConfig.push({
@@ -97,6 +102,7 @@ n.on('end', function(){
 				if(typeof report[currentValue.shortname] === 'undefined'){
 					valid = false;
 					indicatorsMissing.push(currentValue.shortname);
+					console.log('Report invalid');
 				}
 			});
 
@@ -108,9 +114,11 @@ n.on('end', function(){
 
 				try{
 					//Get the file that holds all of this week's numbers reports
-					var numbers = require('./weeklyreports/'+today.getUTCDate().toString()+'-'+(today.getMonth()+1).toString()+'-'+today.getFullYear().toString()+'.json');
+					var numbers = dynamicRequire.read('../weeklyreports/'+today.getUTCDate().toString()+'-'+(today.getMonth()+1).toString()+'-'+today.getFullYear().toString()+'.json');
+					console.log('Was able to load up previous report file.');
 				}catch(err){
 					//Init empty array.  We will create this file.
+					console.log(err);
 					var numbers = [];
 				}
 
@@ -119,6 +127,9 @@ n.on('end', function(){
 				//Do we have a record already from them today?  If so, we need to overwrite it.
 				var needToOverwrite = false;
 				var overwriteIndex;
+
+				console.log(numbers);
+
 				numbers.forEach(function(currentValue, index, array){
 					if(currentValue.phone == phoneNumber){
 						needToOverwrite = true;
@@ -129,21 +140,25 @@ n.on('end', function(){
 				if(needToOverwrite){
 					//Overwriting.
 					numbers[overwriteIndex] = {recieved: Date.now(), phone: phoneNumber, report: report};
+					console.log('Overwriting')
 				}else{
 					//No need to overwrite, appending.
 					numbers.push({recieved: Date.now(), phone: phoneNumber, report: report});
+					console.log('Saving')
 				}
 
 				var fs = require('fs');
 
-				fs.writeFile('./weeklyreports/'+today.getUTCDate().toString()+'-'+(today.getMonth()+1).toString()+'-'+today.getFullYear().toString()+'.json', JSON.stringify(numbers), function(){
-					var mailer = require('./helpers/mailer.js');
-					if(needToOverwrite){
-						mailer.mail(mail.from[0].address, '', 'Thank your for submitting your numbers report again.  I was able to successfully process it and overwrite your previous report.  Be sure to submit your report again through the missionary portal.  Love, Winston');
-					}else{
-						mailer.mail(mail.from[0].address, '', 'Thank your for submitting your numbers report.  I was able to successfully process it.  Be sure to submit your report again through the missionary portal.  Love, Winston');	
-					}
-				});
+				dynamicRequire.write('./weeklyreports/'+today.getUTCDate().toString()+'-'+(today.getMonth()+1).toString()+'-'+today.getFullYear().toString()+'.json', numbers);
+
+				var mailer = require('./helpers/mailer.js');
+				if(needToOverwrite){
+					//mailer.mail(mail.from[0].address, '', 'Thank your for submitting your numbers report again.  I was able to successfully process it and overwrite your previous report.  Be sure to submit your report again through the missionary portal.  Love, Winston');
+					//console.log('Sent acknowledgement text for overwrite');
+				}else{
+					//mailer.mail(mail.from[0].address, '', 'Thank your for submitting your numbers report.  I was able to successfully process it.  Be sure to submit your report again through the missionary portal.  Love, Winston');	
+					//console.log('Sent acknowledgement text');
+				}
 
 			}else{
 				//Reply that there was a problem.

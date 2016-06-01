@@ -4,16 +4,20 @@ html
 		title=title
 
 		//Bootstrap CSS
-		link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css", integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7", crossorigin="anonymous")
+		//link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css", integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7", crossorigin="anonymous")
+		link(rel="stylesheet", href="/bootstrap/3.3.6/css/bootstrap.min.css")
 
 		//Bootstrap Theme (Optional)
-		link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css", integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r", crossorigin="anonymous")
+		//link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css", integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r", crossorigin="anonymous")
+		link(rel="stylesheet", href="/bootstrap/3.3.6/css/bootstrap-theme.min.css")
 
 		//JQuery
-		script(src="https://code.jquery.com/jquery-2.2.3.min.js"   integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo="   crossorigin="anonymous")
+		//script(src="https://code.jquery.com/jquery-2.2.3.min.js"   integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo="   crossorigin="anonymous")
+		script(src="/javascripts/jquery-2.2.3.min.js")
 
 		//Bootstrap JS
-		script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js", integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS", crossorigin="anonymous")
+		//script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js", integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS", crossorigin="anonymous")
+		script(src="/bootstrap/3.3.6/js/bootstrap.min.js")
 
 		//In-house CSS
 		link(rel='stylesheet', href='/stylesheets/style.css')
@@ -35,10 +39,12 @@ html
 					li
 						a(href="/sendtext") Send Mass Text
 					li
-						a(href="/areas") Areas
+						a(href="/areas") View Number Reports
 					li
-						a(href="/reports") Reports
+						a(href="/tocall") To Call
 					li
+						a(href="/reports") Manual Report
+					//li
 						a(href="/keyindicators") Manage Key Indicators
 					li
 						a(href="/import") Import

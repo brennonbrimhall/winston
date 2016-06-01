@@ -1,0 +1,33 @@
+extends layout
+
+block title
+	h1 To Call (Those who have not yet submitted their numbers)
+
+block content
+	- Object.keys(areas).forEach(function(zone, index) {
+	//Verify that this isn't the office
+	- if(zone != 'MISSION OFFICE'){
+	h2
+		a(class="captialize header-link" href="/zone/"+zone)=zone.toLowerCase()
+	- Object.keys(areas[zone]).forEach(function(district, index) {
+	div(class="panel panel-default")
+		div(class="panel-heading")
+			a(href="/district/"+district.replace('/', '-') class="header-link captialize")=district.toLowerCase()
+		div(class="panel-content")
+		div(class="list-group")
+		- Object.keys(areas[zone][district]).forEach(function(area, index) {
+		- var missionaryNames;
+		- for (var i = 0; i < areas[zone][district][area].missionaries.length; i++){
+			- if(i == 0){
+				- missionaryNames = areas[zone][district][area].missionaries[i]
+			- }else{
+				- missionaryNames = missionaryNames+'; '+areas[zone][district][area].missionaries[i]
+			- }
+		- }
+
+			a(href="/areas/"+area.replace('/', '-') class="list-group-item captialize")=area.toLowerCase()+' ('+areas[zone][district][area].phone+'; '+ missionaryNames+')'
+		
+		- });
+	- });
+	- }
+	- });

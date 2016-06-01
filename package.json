@@ -16,6 +16,7 @@
     "express-busboy": "2.5.x",
     "xlsx": "0.8.0",
     "nodemailer": "2.4.2",
-    "mail-notifier": "0.3.0"
+    "mail-notifier": "0.3.0",
+    "jsonfile":"2.3.1"
   }
 }

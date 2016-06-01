@@ -46,3 +46,7 @@ h3 {
 .nobreak {
     page-break-before: auto;
 }
+
+td, th {
+    text-align: center;
+}

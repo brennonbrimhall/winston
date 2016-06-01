@@ -8,9 +8,9 @@ block content
 	ul
 		- for(area in district){
 		li(class="captialize")
-			a(href="/areas/"+area)=area.toLowerCase()
+			a(href="/areas/"+area.replace('/', '-'))=area.toLowerCase()
 		- }
-	h2 Reports
+	h2 Totals
 	- for(var t = 0; t < data.length; t++){
 	- //Table for each transfer
 	table(class="table table-hover")
@@ -25,8 +25,7 @@ block content
 			tr
 				td=data[t][i]['$']
 				- for(var j = 0; j < config.length; j++){
-				td=data[t][i][config[j]['shortname']]
+				td=data[t][i][config[j]['shortname']]+' ('+Math.round((data[t][i][config[j]['shortname']]/numComps)*100)/100+')'
 				- }
 			- }
 	- }
-	p=zoneData
