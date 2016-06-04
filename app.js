@@ -114,7 +114,7 @@ n.on('end', function(){
 
 				try{
 					//Get the file that holds all of this week's numbers reports
-					var numbers = dynamicRequire.read('../weeklyreports/'+today.getUTCDate().toString()+'-'+(today.getMonth()+1).toString()+'-'+today.getFullYear().toString()+'.json');
+					var numbers = dynamicRequire.readWeeklyReport(today);
 					console.log('Was able to load up previous report file.');
 				}catch(err){
 					//Init empty array.  We will create this file.
@@ -147,17 +147,15 @@ n.on('end', function(){
 					console.log('Saving')
 				}
 
-				var fs = require('fs');
-
-				dynamicRequire.write('./weeklyreports/'+today.getUTCDate().toString()+'-'+(today.getMonth()+1).toString()+'-'+today.getFullYear().toString()+'.json', numbers);
+				dynamicRequire.writeWeeklyReport(today, numbers);
 
 				var mailer = require('./helpers/mailer.js');
 				if(needToOverwrite){
-					//mailer.mail(mail.from[0].address, '', 'Thank your for submitting your numbers report again.  I was able to successfully process it and overwrite your previous report.  Be sure to submit your report again through the missionary portal.  Love, Winston');
-					//console.log('Sent acknowledgement text for overwrite');
+					mailer.text(phoneNumber, '', 'Thank your for submitting your numbers report again.  I was able to successfully process it and overwrite your previous report.  Be sure to submit your report again through the missionary portal.  Love, Winston');
+					console.log('Sent acknowledgement text for overwrite');
 				}else{
-					//mailer.mail(mail.from[0].address, '', 'Thank your for submitting your numbers report.  I was able to successfully process it.  Be sure to submit your report again through the missionary portal.  Love, Winston');	
-					//console.log('Sent acknowledgement text');
+					mailer.text(phoneNumber, '', 'Thank your for your numbers report.  Be sure to submit your report again through the missionary portal.  Love, Winston');	
+					console.log('Sent acknowledgement text');
 				}
 
 			}else{
@@ -170,7 +168,7 @@ n.on('end', function(){
 			//It's not Monday, so we need to reject the text.
 			console.log('Report recieved, even though it\'s not Monday.')
 			var mailer = require('./helpers/mailer.js');
-			mailer.mail(mail.from[0].address, '', 'It seems we have a misunderstanding.  Why would you send a report today?  If you really do need to send it in now, please contact the Assistants at 303-929-1845.  Love, Winston');
+			mailer.mail(mail.from[0].address, '', 'Perhaps we have a misunderstanding...it\'s not Monday.  If you really do need to send this in now, please contact the Assistants at 303-929-1845.  Love, Winston');
 		}
 
 		//Get what phone texted at us, along with their message.

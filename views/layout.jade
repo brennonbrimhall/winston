@@ -4,20 +4,26 @@ html
 		title=title
 
 		//Bootstrap CSS
-		//link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css", integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7", crossorigin="anonymous")
-		link(rel="stylesheet", href="/bootstrap/3.3.6/css/bootstrap.min.css")
+		link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css", integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7", crossorigin="anonymous")
+		//link(rel="stylesheet", href="/bootstrap/3.3.6/css/bootstrap.min.css")
 
 		//Bootstrap Theme (Optional)
-		//link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css", integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r", crossorigin="anonymous")
-		link(rel="stylesheet", href="/bootstrap/3.3.6/css/bootstrap-theme.min.css")
+		link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css", integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r", crossorigin="anonymous")
+		//link(rel="stylesheet", href="/bootstrap/3.3.6/css/bootstrap-theme.min.css")
 
 		//JQuery
-		//script(src="https://code.jquery.com/jquery-2.2.3.min.js"   integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo="   crossorigin="anonymous")
-		script(src="/javascripts/jquery-2.2.3.min.js")
+		script(src="https://code.jquery.com/jquery-2.2.3.min.js"   integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo="   crossorigin="anonymous")
+		//script(src="/javascripts/jquery-2.2.3.min.js")
 
 		//Bootstrap JS
-		//script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js", integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS", crossorigin="anonymous")
-		script(src="/bootstrap/3.3.6/js/bootstrap.min.js")
+		script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js", integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS", crossorigin="anonymous")
+		//script(src="/bootstrap/3.3.6/js/bootstrap.min.js")
+
+		//Datatables CSS
+		link(rel="stylesheet" type="text/css" href="https://cdn.datatables.net/u/bs/jszip-2.5.0,pdfmake-0.1.18,dt-1.10.12,b-1.2.1,b-html5-1.2.1,b-print-1.2.1,fh-3.1.2,r-2.1.0/datatables.min.css")
+
+		//Datatables JS
+		script(type="text/javascript" src="https://cdn.datatables.net/u/bs/jszip-2.5.0,pdfmake-0.1.18,dt-1.10.12,b-1.2.1,b-html5-1.2.1,b-print-1.2.1,fh-3.1.2,r-2.1.0/datatables.min.js")
 
 		//In-house CSS
 		link(rel='stylesheet', href='/stylesheets/style.css')
@@ -25,6 +31,7 @@ html
 		//In-house JS
 		script(src="/javascripts/button-file.js")
 		script(src="/javascripts/alert.js")
+		script(src="/javascripts/datatable-init.js")
 	nav(class="navbar navbar-inverse navbar-fixed-top")
 		div(class="container-fluid")
 			div(class="navbar-header")
@@ -38,14 +45,20 @@ html
 				ul(class="nav navbar-nav navbar-left")
 					li
 						a(href="/sendtext") Send Mass Text
-					li
-						a(href="/areas") View Number Reports
-					li
-						a(href="/tocall") To Call
-					li
-						a(href="/reports") Manual Report
+					li(class="dropdown")
+						a(href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false") Numbers
+							span(class="caret")
+						ul(class="dropdown-menu")
+							li
+								a(href="/areas") View Number Reports
+							li
+								a(href="/tocall") To Call
+							li
+								a(href="/reports") Manual Report
 					//li
 						a(href="/keyindicators") Manage Key Indicators
+					li
+						a(href="/miles") Miles
 					li
 						a(href="/import") Import
 				ul(class="nav navbar-nav navbar-right")

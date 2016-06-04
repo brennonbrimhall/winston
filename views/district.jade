@@ -5,15 +5,19 @@ block title
 
 block content
 	h2 District Information
-	ul
+	div(class="panel panel-default")
+		div(class="panel-heading")
+			a(class="header-link") District
+		div(class="panel-content")
+		div(class="list-group")
 		- for(area in district){
-		li(class="captialize")
-			a(href="/areas/"+area.replace('/', '-'))=area.toLowerCase()
+			a(href="/areas/"+area.replace('/', '-') class="list-group-item captialize")=area.toLowerCase()
 		- }
+
 	h2 Totals
 	- for(var t = 0; t < data.length; t++){
 	- //Table for each transfer
-	table(class="table table-hover")
+	table(class="table table-hover data-table")
 		thead
 			tr
 				th Submitted

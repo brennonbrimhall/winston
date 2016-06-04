@@ -22,5 +22,20 @@ module.exports = {
 		transporter.sendMail(mailOptions, function(err, info){
 			callback(err, info);
 		});
+	},
+
+	text: function(toNumber, subject, text, callback){
+		var imos = require('./imos.js');
+
+		if(toNumber instanceof Array){//Send b
+			var phoneEmails = [];
+			for(number in toNumber){
+				phoneEmails.push(imos.phoneNumberToEmail(toNumber));
+			}
+
+			this.mail(phoneEmails, subject, text, callback);
+		}else{//Only send one
+			this.mail(imos.phoneNumberToEmail(toNumber), subject, text, callback);
+		}
 	}
 }

@@ -11,7 +11,7 @@ block content
 				input(list="phones" name="phone" class="form-control" required)
 				datalist(id="phones")
 					- for(var i = 0; i < phones.length; i++){
-					option(value=""+phones[i])
+					option(value=""+phones[i].phone)=phones[i].name
 					- }
 		div(class="form-group")
 			label(for="$" class="col-sm-2 control-label") Submission Date (Monday report should have been submitted)

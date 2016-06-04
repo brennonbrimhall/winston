@@ -5,20 +5,19 @@ block title
 
 block content
 	h2 Zone Information
-	ul
-		- for(district in zone){
-		li(class="captialize")
-			a(href="/district/"+district)=district.toLowerCase()
-		ul
+	- for(district in zone){
+	div(class="panel panel-default")
+		div(class="panel-heading")
+			a(class="header-link captialize" href="/district/"+district)=district.toLowerCase()
+		div(class="panel-content")
+		div(class="list-group")
 			-for(area in zone[district]){
-			li(class="captialize")
-				a(href="/areas/"+area.replace('/', '-'))=area.toLowerCase()
+			a(class="list-group-item captialize" href="/areas/"+area.replace('/', '-'))=area.toLowerCase()
 			-}
-		- }
-	h2 Reports
-	- for(var t = 0; t < data.length; t++){
-	//Table for each transfer
-	table(class="table table-hover")
+	- }
+
+	h2 Current Transfer
+	table(class="table table-hover data-table")
 		thead
 			tr
 				th Submitted
@@ -26,6 +25,24 @@ block content
 				th=config[i].name
 				- }
 		tbody
+			- for(var i = 0; i < data[0].length; i++){
+			tr
+				td=data[0][i]['$']
+				- for(var j = 0; j < config.length; j++){
+				td=data[0][i][config[j]['shortname']]+' ('+Math.round((data[0][i][config[j]['shortname']]/numComps)*100)/100+')'
+				- }
+			- }
+
+	h2 Previous Transfers
+	table(class="table table-hover data-table")
+		thead
+			tr
+				th Submitted
+				- for(var i = 0; i < config.length; i++){
+				th=config[i].name
+				- }
+		tbody
+			- for(var t = 1; t < data.length; t++){
 			- for(var i = 0; i < data[t].length; i++){
 			tr
 				td=data[t][i]['$']
@@ -33,4 +50,4 @@ block content
 				td=data[t][i][config[j]['shortname']]+' ('+Math.round((data[t][i][config[j]['shortname']]/numComps)*100)/100+')'
 				- }
 			- }
-	- }
+			- }

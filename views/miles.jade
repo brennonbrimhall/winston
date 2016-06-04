@@ -1,0 +1,52 @@
+extends layout
+
+block title
+	h1(class="nobreak") Month End Miles
+	- var fullMonth = function(date){
+		- if(date.getMonth() == 0){
+			- return "Jan";
+		- }else if(date.getMonth() == 1){
+			- return "Feb";
+		- }else if(date.getMonth() == 2){
+			- return "Mar";
+		- }else if(date.getMonth() == 3){
+			- return "Apr";
+		- }else if(date.getMonth() == 4){
+			- return "May";
+		- }else if(date.getMonth() == 5){
+			- return "Jun";
+		- }else if(date.getMonth() == 6){
+			- return "Jul";
+		- }else if(date.getMonth() == 7){
+			- return "Aug";
+		- }else if(date.getMonth() == 8){
+			- return "Sep";
+		- }else if(date.getMonth() == 9){
+			- return "Oct";
+		- }else if(date.getMonth() == 10){
+			- return "Nov";
+		- }else if(date.getMonth() == 11){
+			- return "Dec";
+		- }
+	-}
+
+block content
+	table(class="table table-hover data-table")
+		thead
+			tr
+				th Zone
+				th District
+				th Area
+				th Phone
+				th="Reported Miles ("+reportedDate.getDate().toString()+"-"+fullMonth(reportedDate).toString()+"-"+reportedDate.getFullYear().toString()+")"
+				th Estimated End of Month Miles
+		tbody
+			- for(var i = 0; i < data.length; i++){
+			tr
+				td=data[i].zoneName
+				td=data[i].districtName
+				td=data[i].areaName
+				td=data[i].area.phone
+				td=data[i].endingOdometer
+				td=Math.round(data[i].estimated)
+			- }

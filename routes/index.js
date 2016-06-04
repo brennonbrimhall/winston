@@ -11,33 +11,87 @@ router.get('/', function(req, res, next) {
 	res.render('index', { title: 'Winston', format: format});
 });
 
+router.get('/miles', function(req, res, next){
+	var dynamicRequire = require('../helpers/dynamicRequire.js');
+	var datetime = require('../helpers/datetime.js');
+
+	//When was the last day of the previous month?
+	var d = new Date();
+	d.setDate(1);
+	d.setHours(-1);
+
+	//Now, give it to datetime to get the previous Monday.
+	var lastMonday = datetime.getLastMondayFromDate(d);
+	var lastLastMonday = datetime.getLastMondayFromDate(d);
+	lastLastMonday.setHours(-7*24);
+	console.log(lastMonday.toDateString());
+	console.log(lastLastMonday.toDateString());
+
+	var data = [];
+
+	//Get areas, then get the associated ending miles
+	var areas = dynamicRequire.readAreas();
+	var weeklyReport = dynamicRequire.readWeeklyReport(lastMonday);
+	var previousWeeklyReport = dynamicRequire.readWeeklyReport(lastLastMonday);
+	
+	var i = 0;
+	
+	for(zone in areas){
+		if(zone != "MISSION OFFICE"){
+			for (district in areas[zone]){
+				for (area in areas[zone][district]){
+					data[i] = {};
+					data[i].area = areas[zone][district][area];
+					data[i].zoneName = zone;
+					data[i].districtName = district;
+					data[i].areaName = area;
+					data[i].endingOdometer = 0;
+					data[i].estimated = 0;
+
+					//Getting ending miles from report
+					for(var j = 0; j < weeklyReport.length; j++){
+						if(areas[zone][district][area].phone == weeklyReport[j].phone){
+							data[i].endingOdometer = weeklyReport[j].report.miles;
+						}
+					}
+
+					//Getting ending miles from previous report to caculate weekly usage,
+					//then using that to estimate the monthly ending odometer.
+					var weeksToInterpolate = (d.getDate() - lastMonday.getDate())/7;
+
+					for(var j = 0; j < previousWeeklyReport.length; j++){
+						if(areas[zone][district][area].phone == previousWeeklyReport[j].phone){
+							data[i].estimated = data[i].endingOdometer + weeksToInterpolate*(data[i].endingOdometer - previousWeeklyReport[j].report.miles);
+						}
+					}
+
+					i++;
+				}
+			}
+		}
+	}
+
+	console.dir(data);
+
+	res.render('miles', {title: 'Month End Miles', data: data, reportedDate: lastMonday});
+});
+
 router.get('/tocall', function(req, res, next) {
 	var dynamicRequire = require('../helpers/dynamicRequire.js');
+	var datetime = require('../helpers/datetime.js');
+
 	var areas = dynamicRequire.read('../areas/current.json');
 
-	//Now that we have that, we have to figure out which day is Monday
-	//so we know the filenames of the number reports
-	var beginning = new Date("5/2/2011"); //Date that seems to be the beginning of Skynet
-	var now = new Date();
-	var timeDiff = Math.abs(now.getTime() - beginning.getTime());
-	var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
-	var diffWeeks = Math.floor(diffDays/7);
-	var week = (diffWeeks % 6) - 1; //Week 1 is 0, Week 3 is 2, etc., since we start with zero
-
-	var day = now.getDay();
-	var lastMonday = new Date(now.setDate(now.getDate() - day + (day == 0 ? -6:1)));
-
-	console.log(lastMonday.toDateString());
-	console.log('../weeklyreports/'+lastMonday.getDate().toString()+'-'+(lastMonday.getMonth()+1).toString()+'-'+lastMonday.getFullYear().toString()+'.json')
+	var lastMonday = datetime.getLastMonday();
 
 	//Get the phone numbres of those who HAVE submitted this week
 	var phoneNumbers = [];
-	var weeklyreports = dynamicRequire.read('../weeklyreports/'+lastMonday.getDate().toString()+'-'+(lastMonday.getMonth()+1).toString()+'-'+lastMonday.getFullYear().toString()+'.json');
+	var weeklyreports = dynamicRequire.readWeeklyReport(lastMonday);
 	for(report in weeklyreports){
 		phoneNumbers.push(weeklyreports[report].phone);
 	}
 
-	//Now, going through the areas list and if they have reported, we are NOT going to put them
+	//Now, going through the areas list and if they have NOT reported, we are going to put them
 	//into a new object that has a modified areas list with only those who have not reported.
 	var didNotReport = {};
 	for(zone in areas){
@@ -72,7 +126,7 @@ router.get('/reports', function(req, res, next) {
 
 	if(typeof req.query.phone !== 'undefined'){
 		//Save this data that we got!
-		var config = dynamicRequire.read('../weeklyreports/config.json');
+		var config = dynamicRequire.readWeeklyReportConfig();
 		var report = {};
 
 		//get phone, date, and miles
@@ -88,12 +142,10 @@ router.get('/reports', function(req, res, next) {
 
 		report.miles = miles;
 
-		//console.log('../weeklyreports/'+date.getUTCDate().toString()+'-'+(date.getMonth()+1).toString()+'-'+date.getFullYear().toString()+'.json');
-
 		//Do we have a file for this reporting day?
 		try{
 			//Get the file that holds all of this week's numbers reports
-			var numbers = dynamicRequire.read('../weeklyreports/'+date.getUTCDate().toString()+'-'+(date.getMonth()+1).toString()+'-'+date.getFullYear().toString()+'.json');
+			var numbers = dynamicRequire.readWeeklyReport(date);
 		}catch(err){
 			//Init empty array.  We will create this file.
 			//console.log('Numbers file doesn\'t exist');
@@ -120,35 +172,37 @@ router.get('/reports', function(req, res, next) {
 			numbers.push({recieved: Date.now(), phone: phoneNumber, report: report});
 		}
 
-		var fs = require('fs');
-		fs.writeFile('./weeklyreports/'+date.getUTCDate().toString()+'-'+(date.getMonth()+1).toString()+'-'+date.getFullYear().toString()+'.json', JSON.stringify(numbers), function(){
+		dynamicRequire.writeWeeklyReport(date, numbers);
 
-			var areas = dynamicRequire.read('../areas/current.json');
-			var phones = [];
-			for(zone in areas){
-				for(district in areas[zone]){
-					for(area in areas[zone][district]){
-						phones.push(areas[zone][district][area].phone);
-					}
+		//var fs = require('fs');
+		//fs.writeFile('./weeklyreports/'+date.getUTCDate().toString()+'-'+(date.getMonth()+1).toString()+'-'+date.getFullYear().toString()+'.json', JSON.stringify(numbers), function(){
+
+		var areas = dynamicRequire.readAreas();
+		var phones = [];
+		for(zone in areas){
+			for(district in areas[zone]){
+				for(area in areas[zone][district]){
+					phones.push(areas[zone][district][area].phone);
 				}
 			}
+		}
 
-			res.redirect('/reports?success=true');
-
-			res.render('reports', {phones: phones, config: config, alert: {type: 'success', title: 'Update successful!', body: 'Your numbers report was saved.  Do NOT refresh the page, or go back, as that will cause the '}});
-		});
+		res.redirect('/reports?success=true');
+		//res.render('reports', {phones: phones, config: config, alert: {type: 'success', title: 'Update successful!', body: 'Your numbers report was saved.  Do NOT refresh the page, or go back, as that will cause the '}});
+		//});
 
 
 	}else{
 		//No records to save
-		var areas = dynamicRequire.read('../areas/current.json');
-		var config = dynamicRequire.read('../weeklyreports/config.json');
+		var areas = dynamicRequire.readAreas();
+		var config = dynamicRequire.readWeeklyReportConfig();
 		var phones = [];
 
 		for(zone in areas){
 			for(district in areas[zone]){
 				for(area in areas[zone][district]){
-					phones.push(areas[zone][district][area].phone);
+					phones.push({name: area, 
+						phone: areas[zone][district][area].phone});
 				}
 			}
 		}
@@ -164,14 +218,14 @@ router.get('/reports', function(req, res, next) {
 //Populate the areas with who is serving there
 router.get('/areas', function(req, res, next) {
 	var dynamicRequire = require('../helpers/dynamicRequire.js');
-	var areas = dynamicRequire.read('../areas/current.json');
+	var areas = dynamicRequire.readAreas();
 	res.render('areas', {title: 'Areas', areas: areas});	
 });
 
 router.get('/areas/:area', function(req, res, next) {
 	var dynamicRequire = require('../helpers/dynamicRequire.js');
-	var areas = dynamicRequire.read('../areas/current.json');
-	var config = dynamicRequire.read('../weeklyreports/config.json');
+	var areas = dynamicRequire.readAreas();
+	var config = dynamicRequire.readWeeklyReportConfig();
 	var data = [];
 	var areaData = {};
 
@@ -182,7 +236,6 @@ router.get('/areas/:area', function(req, res, next) {
 	var areaName = req.params.area.replace('-', '/');
 	var phoneNumber;
 
-	var areas = dynamicRequire.read('../areas/current.json');
 	for (zone in areas) {
 		for(district in areas[zone]){
 			for(area in areas[zone][district]){
@@ -194,20 +247,9 @@ router.get('/areas/:area', function(req, res, next) {
 		}
 	}
 
-	//Now that we have that, we have to figure out which day is Monday
-	//so we know the filenames of the number reports
-	var beginning = new Date("5/2/2011"); //Date that seems to be the beginning of Skynet
-	var now = new Date();
-	var timeDiff = Math.abs(now.getTime() - beginning.getTime());
-	var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
-	var diffWeeks = Math.floor(diffDays/7);
-	var week = (diffWeeks % 6) - 1; //Week 1 is 0, Week 3 is 2, etc., since we start with zero
-
-	var day = now.getDay();
-	var lastMonday = new Date(now.setDate(now.getDate() - day + (day == 0 ? -6:1)));
-
-	//How many weeks back do we need on this transfer?
-	var weeksBackToGet;
+	var datetime = require('../helpers/datetime.js');
+	var week = datetime.getWeekOfTransfer();
+	var lastMonday = datetime.getLastMonday();
 
 	//If this is week 1, we need to get all of last transfer;
 	//otherwise, just get this transfers'.
@@ -224,7 +266,7 @@ router.get('/areas/:area', function(req, res, next) {
 	data[0]=[];
 	for(var i = 0; i < weeksBackToGet; i++){
 		//This one should exist...
-		var weeklyreport = dynamicRequire.read('../weeklyreports/'+lastMonday.getDate().toString()+'-'+(lastMonday.getMonth()+1).toString()+'-'+lastMonday.getFullYear().toString()+'.json');
+		var weeklyreport = dynamicRequire.readWeeklyReport(lastMonday);
 		data[0][i] = {};
 
 		//Only should be one report in there in a week...
@@ -244,7 +286,7 @@ router.get('/areas/:area', function(req, res, next) {
 		for(var w = 0; w < 6; w++){
 			//Now, we could theoretically bump back before Winston has records.
 			try {
-				var weeklyreport = dynamicRequire.read('../weeklyreports/'+lastMonday.getDate().toString()+'-'+(lastMonday.getMonth()+1).toString()+'-'+lastMonday.getFullYear().toString()+'.json');
+				var weeklyreport = dynamicRequire.readWeeklyReport(lastMonday);
 				
 						//And each transfer has six weeks
 				if(typeof data[t] === 'undefined'){
@@ -272,9 +314,11 @@ router.get('/areas/:area', function(req, res, next) {
 });
 
 router.get('/district/:district', function(req, res, next) {
-	var dynamicRequire = require('../helpers/dynamicRequire.js')
-	var areas = dynamicRequire.read('../areas/current.json');
-	var config = dynamicRequire.read('../weeklyreports/config.json');
+	var dynamicRequire = require('../helpers/dynamicRequire.js');
+	var datetime = require('../helpers/datetime.js');
+
+	var areas = dynamicRequire.readAreas();
+	var config = dynamicRequire.readWeeklyReportConfig();
 	var data = [];
 	var districtData = {};
 
@@ -283,7 +327,6 @@ router.get('/district/:district', function(req, res, next) {
 	var districtName = req.params.district;
 	var phoneNumbers =[];
 
-	var areas = dynamicRequire.read('../areas/current.json');
 	for (zone in areas) {
 		for(district in areas[zone]){
 			if(district == districtName){
@@ -295,17 +338,8 @@ router.get('/district/:district', function(req, res, next) {
 		}
 	}
 
-	//Now that we have that, we have to figure out which day is Monday
-	//so we know the filenames of the number reports
-	var beginning = new Date("5/2/2011"); //Date that seems to be the beginning of Skynet
-	var now = new Date();
-	var timeDiff = Math.abs(now.getTime() - beginning.getTime());
-	var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
-	var diffWeeks = Math.floor(diffDays/7);
-	var week = (diffWeeks % 6) - 1; //Week 1 is 0, Week 3 is 2, etc., since we start with zero
-
-	var day = now.getDay();
-	var lastMonday = new Date(now.setDate(now.getDate() - day + (day == 0 ? -6:1)));
+	var lastMonday = datetime.getLastMonday();
+	var week = datetime.getWeekOfTransfer();
 
 	//How many weeks back do we need on this transfer?
 	var weeksBackToGet;
@@ -325,7 +359,7 @@ router.get('/district/:district', function(req, res, next) {
 	data[0]=[];
 	for(var i = 0; i < weeksBackToGet; i++){
 		//This one should exist...
-		var weeklyreport = dynamicRequire.read('../weeklyreports/'+lastMonday.getDate().toString()+'-'+(lastMonday.getMonth()+1).toString()+'-'+lastMonday.getFullYear().toString()+'.json');
+		var weeklyreport = dynamicRequire.readWeeklyReport(lastMonday);
 		data[0][i] = {};
 
 		//Only should be one report in there in a week...
@@ -352,7 +386,7 @@ router.get('/district/:district', function(req, res, next) {
 		for(var w = 0; w < 6; w++){
 			//Now, we could theoretically bump back before Winston has records.
 			try {
-				var weeklyreport = dynamicRequire.read('../weeklyreports/'+lastMonday.getDate().toString()+'-'+(lastMonday.getMonth()+1).toString()+'-'+lastMonday.getFullYear().toString()+'.json');
+				var weeklyreport = dynamicRequire.readWeeklyReport(lastMonday);
 				
 						//And each transfer has six weeks
 				if(typeof data[t] === 'undefined'){
@@ -397,9 +431,12 @@ router.get('/district/:district', function(req, res, next) {
 });
 
 router.get('/zone/:zone', function(req, res, next) {
-	var dynamicRequire = require('../helpers/dynamicRequire.js')
-	var areas = dynamicRequire.read('../areas/current.json');
-	var config = dynamicRequire.read('../weeklyreports/config.json');
+	var dynamicRequire = require('../helpers/dynamicRequire.js');
+	var datetime = require('../helpers/datetime.js');
+
+	var areas = dynamicRequire.readAreas();
+	var config = dynamicRequire.readWeeklyReportConfig();
+
 	var data = [];
 	var zoneData = {};
 
@@ -419,18 +456,9 @@ router.get('/zone/:zone', function(req, res, next) {
 			}
 		}
 	}
-
-	//Now that we have that, we have to figure out which day is Monday
-	//so we know the filenames of the number reports
-	var beginning = new Date("5/2/2011"); //Date that seems to be the beginning of Skynet
-	var now = new Date();
-	var timeDiff = Math.abs(now.getTime() - beginning.getTime());
-	var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
-	var diffWeeks = Math.floor(diffDays/7);
-	var week = (diffWeeks % 6) - 1; //Week 1 is 0, Week 3 is 2, etc., since we start with zero
-
-	var day = now.getDay();
-	var lastMonday = new Date(now.setDate(now.getDate() - day + (day == 0 ? -6:1)));
+	
+	var week = datetime.getWeekOfTransfer();
+	var lastMonday = datetime.getLastMonday();
 
 	//How many weeks back do we need on this transfer?
 	var weeksBackToGet;
@@ -450,7 +478,7 @@ router.get('/zone/:zone', function(req, res, next) {
 	data[0]=[];
 	for(var i = 0; i < weeksBackToGet; i++){
 		//This one should exist...
-		var weeklyreport = dynamicRequire.read('../weeklyreports/'+lastMonday.getDate().toString()+'-'+(lastMonday.getMonth()+1).toString()+'-'+lastMonday.getFullYear().toString()+'.json');
+		var weeklyreport = dynamicRequire.readWeeklyReport(lastMonday);
 		data[0][i] = {};
 
 		//Only should be one report in there in a week...
@@ -477,7 +505,7 @@ router.get('/zone/:zone', function(req, res, next) {
 		for(var w = 0; w < 6; w++){
 			//Now, we could theoretically bump back before Winston has records.
 			try {
-				var weeklyreport = require('../weeklyreports/'+lastMonday.getDate().toString()+'-'+(lastMonday.getMonth()+1).toString()+'-'+lastMonday.getFullYear().toString()+'.json');
+				var weeklyreport = dynamicRequire.readWeeklyReport(lastMonday);
 				
 						//And each transfer has six weeks
 				if(typeof data[t] === 'undefined'){
@@ -520,24 +548,16 @@ router.get('/zone/:zone', function(req, res, next) {
 //Generate big mission report
 router.get('/missiontotals', function(req, res, next) {
 	var dynamicRequire = require('../helpers/dynamicRequire.js');
+	var datetime = require('../helpers/datetime.js');
 
-	//First of all, what week of the transfer are we on?
-	var beginning = new Date("5/2/2011"); //Date that seems to be the beginning of Skynet
-	var now = new Date();
-	var timeDiff = Math.abs(now.getTime() - beginning.getTime());
-	var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
-	var diffWeeks = Math.ceil(diffDays/7);
-	var week = (diffWeeks % 6)-1; //Week 1 is 0, Week 3 is 2, etc., since we start with zero
-	console.log("Week:"+week);
+	var week = datetime.getWeekOfTransfer();
 
 	//Now that we have that, we have to figure out which day is Monday
 	//so we know the filenames of the number reports
-
-	var day = now.getDay();
-	var lastMonday = new Date(now.setDate(now.getDate() - day + (day == 0 ? -6:1)));
+	var lastMonday = datetime.getLastMonday();
+	
 	//Because we will mess with lastMonday, we are making a second clean copy here
-	var endDate = new Date(now.setDate(now.getDate() - day + (day == 0 ? -6:1)));
-
+	var endDate = datetime.getLastMonday();
 	var startDate;
 
 	//Now that we have last Monday, let's get the data for this transfer.
@@ -548,8 +568,8 @@ router.get('/missiontotals', function(req, res, next) {
 	var report = {};
 	var totals = [];
 	var numComps = [];
-	var config = dynamicRequire.read('../weeklyreports/config.json');
-	var areas = dynamicRequire.read('../areas/current.json');
+	var config = dynamicRequire.readWeeklyReportConfig();
+	var areas = dynamicRequire.readAreas();
 
 	//Now, to populate it...
 	//How many weeks back do we need?
@@ -565,7 +585,7 @@ router.get('/missiontotals', function(req, res, next) {
 
 	for(var i = 0; i < weeksBackToGet; i++){
 		//Get the reports
-		var weeklyreport = dynamicRequire.read('../weeklyreports/'+lastMonday.getDate().toString()+'-'+(lastMonday.getMonth()+1).toString()+'-'+lastMonday.getFullYear().toString()+'.json');
+		var weeklyreport = dynamicRequire.readWeeklyReport(lastMonday);
 
 		//Init array to hold number of companionships
 		numComps[i] = {};
@@ -653,6 +673,7 @@ router.get('/missiontotals', function(req, res, next) {
 
 	res.render('missiontotals', 
 		{report: report, 
+			title: 'Mission Totals',
 			numComps: numComps,
 			totals: totals,
 			config: config, 
@@ -663,7 +684,7 @@ router.get('/missiontotals', function(req, res, next) {
 
 router.get('/import', function(req, res, next) {
 	var dynamicRequire = require('../helpers/dynamicRequire.js');
-	var areas = dynamicRequire.read('../areas/current.json');
+	var areas = dynamicRequire.readAreas();
 
 	if(req.query.uploadroster == 'success'){
 		res.render('import', {title: 'Import', alert: {type: 'success', title: 'Upload successful!', body: 'Your upload of the roster was successful!'}, areas: areas});	
@@ -846,27 +867,18 @@ router.get('/sendtext', function(req, res, next){
 				Object.keys(areas[zone]).forEach(function(district, index){
 					Object.keys(areas[zone][district]).forEach(function(area, index){
 						//For testing, only send to Orchard
-						if(area == 'CLEAR CREEK/TABLE MTN YSA' || area == 'LAKEWOOD/Office'){
-							var number = (areas[zone][district][area].phone).slice(3)+'@txt.att.net';
-							
-							//Remove first dash
-							number = number.replace('-', '');
-
-							//Remove second dash
-							number = number.replace('-', '');
-							phones.push(number);
+						if(area == 'LAKEWOOD/Office'){
+							phones.push(areas[zone][district][area].phone);
 						}
 					});
 				});
 			}
 		});
 
-		//console.log(phones);
-
 		//Now, initiating emails.
 		var mailer = require('../helpers/mailer.js');
 
-		mailer.mail(phones, '', req.query.message, function(err, info){
+		mailer.text(phones, '', req.query.message, function(err, info){
 			if(err){
 				console.log(err);
 				res.redirect('/sendtext?success=false');
