@@ -205,6 +205,11 @@ router.get('/reports', function(req, res, next) {
 		var phoneNumber = req.query.phone;
 
 		var date = new Date(req.query['$']);
+
+		//For whatever reason, we get the day before the one we should.
+		//Therefore, increment the day by one.
+		date.setDate(date.getDate() + 1);
+
 		var miles = req.query.miles;
 
 		//now get everything else
@@ -237,14 +242,13 @@ router.get('/reports', function(req, res, next) {
 		});
 
 		if(needToOverwrite){
-			//Overwriting.
+			console.log('Overwriting.');
 			numbers[overwriteIndex] = {recieved: Date.now(), phone: phoneNumber, report: report};
 		}else{
-			//No need to overwrite, appending.
+			console.log('No need to overwrite, appending.');
 			numbers.push({recieved: Date.now(), phone: phoneNumber, report: report});
 		}
 
-		console.dir(numbers);
 		console.log('Saving numbers...');
 
 		dynamicRequire.writeWeeklyReport(date, numbers);
