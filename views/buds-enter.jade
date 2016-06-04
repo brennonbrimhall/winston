@@ -1,0 +1,81 @@
+extends layout
+
+block title
+	h1=title
+
+block content
+	form(class="form-horizontal", action="/buds/enter", method="get")
+		div(class="form-group")
+			label(for="last-name" class="col-sm-2 control-label") Last Name
+			div(class="col-sm-10")
+				input(name="last-name" type="text" class="form-control" required)
+		div(class="form-group")
+			label(for="first-name" class="col-sm-2 control-label") First Name
+			div(class="col-sm-10")
+				input(name="first-name" type="text" class="form-control" required)
+		div(class="form-group")
+			label(for="cmf" class="col-sm-2 control-label") Child, Man, or Woman
+			div(class="col-sm-10")
+				input(name="cmf" list="cmf-list" class="form-control" required)
+				datalist(id="cmf-list")
+					option(value="C") Child
+					option(value="M") Man
+					option(value="F") Woman
+		div(class="form-group")
+			label(for="method" class="col-sm-2 control-label") Method
+			div(class="col-sm-10")
+				input(name="method" list="method-list" class="form-control" required)
+				datalist(id="method-list")
+					option(value="F") Full-Time Missionary Contact
+					option(value="L") LDS Media Referral
+					option(value="U") Unbaptized Child (under 18)
+					option(value="O") OYM
+					option(value="P") Part-Member Family
+					option(value="S") Self Referral
+					option(value="X") Unknown/Other
+		div(class="form-group")
+			label(for="bap-date" class="col-sm-2 control-label") Baptismal Date
+			div(class="col-sm-10")
+				input(name="bap-date" type="date" class="form-control" required)
+		div(class="form-group")
+			label(for="conf-date" class="col-sm-2 control-label") Confirmation Date
+			div(class="col-sm-10")
+				input(name="conf-date" type="date" class="form-control" required)
+		div(class="form-group")
+			label(for="stake" class="col-sm-2 control-label") Stake
+			div(class="col-sm-10")
+				input(name="stake" list="stake-list" class="form-control" required)
+				datalist(id="stake-list")
+					- for(var i = 0; i < units.length; i++){
+					option(value=units[i].name)=units[i].id
+					- }
+		div(class="form-group")
+			label(for="unit" class="col-sm-2 control-label") Unit
+			div(class="col-sm-10")
+				input(name="unit" list="unit-list" class="form-control" required)
+				datalist(id="unit-list")
+					- for(var i = 0; i < units.length; i++){
+					- for(var j = 0; j < units[i].units.length; j++){
+					option(value=units[i].units[j].name)=units[i].units[j].id
+					- }
+					- }
+		div(class="form-group")
+			label(for="senior-companion" class="col-sm-2 control-label") Senior Companion
+			div(class="col-sm-10")
+				input(name="senior-companion" list="missionary-list" class="form-control" required)
+				datalist(id="missionary-list")
+					- for(var id in roster){
+					option(value=roster[id].name)
+					- }
+		div(class="form-group")
+			label(for="junior-companion" class="col-sm-2 control-label") Junior Companion
+			div(class="col-sm-10")
+				input(name="junior-companion" list="missionary-list" class="form-control" required)
+		div(class="form-group")
+			label(for="third-companion" class="col-sm-2 control-label") Third Companion
+			div(class="col-sm-10")
+				input(name="third-companion" list="missionary-list" class="form-control")
+		div(class="form-group")
+			div(class="col-sm-2")
+			div(class="col-sm-10")
+				input(name="submit" type="submit" class="btn btn-primary")

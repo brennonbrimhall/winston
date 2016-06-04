@@ -1,0 +1,392 @@
+[
+	{
+		"name": "Columbine Colorado Stake",
+		"id": 514012,
+		"units":[
+			{
+				"name": "Belleview YSA Ward",
+				"id": 202673
+			},
+			{
+				"name": "Chatfield Ward",
+				"id": 161942
+			},
+			{
+				"name": "Clement Park Ward",
+				"id": 269727
+			},
+			{
+				"name": "Coal Mine Ward",
+				"id": 208892
+			},
+			{
+				"name": "Columbine Ward",
+				"id": 93270
+			},
+			{
+				"name": "Dakota Ridge Ward",
+				"id": 236535
+			},
+			{
+				"name": "Ken Caryl Ward",
+				"id": 181056
+			}
+		]
+	},
+	{
+		"name": "Golden Colorado Stake",
+		"id": 516570,
+		"units":[
+			{
+				"name": "Buena Vista Branch",
+				"id": 149268
+			},
+			{
+				"name": "Granby Branch",
+				"id": 89842
+			},
+			{
+				"name": "Clear Creek Ward",
+				"id": 31895
+			},
+			{
+				"name": "Foothills Ward",
+				"id": 171384
+			},
+			{
+				"name": "Frisco Ward",
+				"id": 102636
+			},
+			{
+				"name": "Front Range Ward",
+				"id": 87890
+			},
+			{
+				"name": "Mountain View Ward",
+				"id": 31887
+			},
+			{
+				"name": "Platte River Ward",
+				"id": 91359
+			},
+			{
+				"name": "Table Mountain Ward (Student)",
+				"id": 269611
+			},
+			{
+				"name": "Vail Ward",
+				"id": 180793
+			}
+		]
+	},
+	{
+		"name": "Grand Junction Colorado Stake",
+		"id": 502448,
+		"units":[
+			{
+				"name": "Mount Garfield Branch (Spanish)",
+				"id": 440329
+			},
+			{
+				"name": "Fruitvale Ward",
+				"id": 157929
+			},
+			{
+				"name": "Grand Mesa Ward",
+				"id": 169706
+			},
+			{
+				"name": "Lands End Ward",
+				"id": 169722
+			},
+			{
+				"name": "Melody Lane Ward",
+				"id": 31747
+			},
+			{
+				"name": "Orchard Mesa Ward",
+				"id": 169714
+			},
+			{
+				"name": "Pear Park Ward",
+				"id": 125733
+			}
+		]
+	},
+	{
+		"name": "Grand Junction West Colorado Stake",
+		"id": 516333,
+		"units":[
+			{
+				"name": "Bookcliff Ward",
+				"id": 36633
+			},
+			{
+				"name": "Canyon View Ward",
+				"id": 98043
+			},
+			{
+				"name": "Fruita 1st Ward",
+				"id": 34681
+			},
+			{
+				"name": "Fruita 2nd Ward",
+				"id": 164879
+			},
+			{
+				"name": "Fruita 3rd Ward",
+				"id": 372641
+			},
+			{
+				"name": "Fruita 4th Ward",
+				"id": 562394
+			},
+			{
+				"name": "Grand Junction 1st Ward",
+				"id": 36625
+			},
+			{
+				"name": "Grand Junction YSA Ward",
+				"id": 205427
+			},
+			{
+				"name": "Monument Ward",
+				"id": 157937
+			},
+			{
+				"name": "Redlands Ward",
+				"id": 96318
+			}
+		]
+	},
+	{
+		"name": "Highlands Ranch Colorado Stake",
+		"id": 517461,
+		"units":[
+			{
+				"name": "Daniels Park Ward",
+				"id": 360783
+			},
+			{
+				"name": "Falcon Park Ward",
+				"id": 366374
+			},
+			{
+				"name": "Heritage Park Ward",
+				"id": 530476
+			},
+			{
+				"name": "Highlands Ranch Ward",
+				"id": 192643
+			},
+			{
+				"name": "Northridge Ward",
+				"id": 231045
+			},
+			{
+				"name": "Roxborough Ward",
+				"id": 466956
+			},
+			{
+				"name": "Saddle Ranch Ward",
+				"id": 1989022
+			},
+			{
+				"name": "Sand Creek YSA Ward",
+				"id": 462691
+			},
+			{
+				"name": "Spring Gulch Ward",
+				"id": 375209
+			},
+			{
+				"name": "Summitview Ward",
+				"id": 355283
+			},
+			{
+				"name": "Westridge Ward",
+				"id": 355291
+			}
+		]
+	},
+	{
+		"name": "Lakewood Colorado Stake",
+		"id": 504327,
+		"units":[
+			{
+				"name": "Barnum Park Branch",
+				"id": 1124161
+			},
+			{
+				"name": "Bear Creek Ward",
+				"id": 34053
+			},
+			{
+				"name": "Dartmouth Ward",
+				"id": 99058
+			},
+			{
+				"name": "Denver 1st Ward (Spanish)",
+				"id": 164844
+			},
+			{
+				"name": "Green Mountain Ward",
+				"id": 99031
+			},
+			{
+				"name": "Lakewood Ward",
+				"id": 243663
+			},
+			{
+				"name": "Quincy Ward",
+				"id": 189626
+			}
+		]
+	},
+	{
+		"name": "Littleton Colorado Stake",
+		"id": 506893,
+		"units":[
+			{
+				"name": "Bowles Grove Ward",
+				"id": 440329
+			},
+			{
+				"name": "Centennial Ward",
+				"id": 157929
+			},
+			{
+				"name": "Cornerstone Park Ward",
+				"id": 169706
+			},
+			{
+				"name": "Littleton Ward",
+				"id": 169722
+			},
+			{
+				"name": "Orchard Ward",
+				"id": 31747
+			},
+			{
+				"name": "Southglenn Ward",
+				"id": 169714
+			}
+		]
+	},
+	{
+		"name": "Meeker Colorado Stake",
+		"id": 503525,
+		"units":[
+			{
+				"name": "Aspen Branch",
+				"id": 32956
+			},
+			{
+				"name": "Baggs Branch",
+				"id": 32123
+			},
+			{
+				"name": "Carbondale Branch (Spanish)",
+				"id": 545120
+			},
+			{
+				"name": "Craig 1st Ward",
+				"id": 32247
+			},
+			{
+				"name": "Craig 2nd Ward",
+				"id": 124052
+			},
+			{
+				"name": "Craig 3rd Ward",
+				"id": 362751
+			},
+			{
+				"name": "Eagle Valley Ward",
+				"id": 90786
+			},
+			{
+				"name": "Glenwood Springs Ward",
+				"id": 36005
+			},
+			{
+				"name": "Grand Valley Ward",
+				"id": 1476378
+			},
+			{
+				"name": "Meeker Ward",
+				"id": 35092
+			},
+			{
+				"name": "Rangely 1st Ward",
+				"id": 35432
+			},
+			{
+				"name": "Rangely 2nd Ward",
+				"id": 352632
+			},
+			{
+				"name": "Rifle 1st Ward",
+				"id": 35475
+			},
+			{
+				"name": "Rifle 2nd Ward",
+				"id": 352608
+			},
+			{
+				"name": "Steamboat Springs Ward",
+				"id": 24023
+			}
+		]
+	},
+	{
+		"name": "Montrose Colorado Stake",
+		"id": 511285,
+		"units":[
+			{
+				"name": "Black Canyon Ward",
+				"id": 1973665
+			},
+			{
+				"name": "Cedaredge Ward",
+				"id": 118532
+			},
+			{
+				"name": "Cimarron Ward",
+				"id": 35211
+			},
+			{
+				"name": "Delta Ward",
+				"id": 34487
+			},
+			{
+				"name": "Gunnison Branch",
+				"id": 36870
+			},
+			{
+				"name": "Mount Sneffles Ward",
+				"id": 106585
+			},
+			{
+				"name": "Naturita Branch",
+				"id": 36137
+			},
+			{
+				"name": "Paonia Ward",
+				"id": 31852
+			},
+			{
+				"name": "San Juan Branch (Spanish)",
+				"id": 1529978
+			},
+			{
+				"name": "Spring Creek Ward",
+				"id": 496871
+			},
+			{
+				"name": "Uncompaghre Ward",
+				"id": 262897
+			}
+		]
+	}
+]
