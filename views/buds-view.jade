@@ -1,0 +1,40 @@
+extends layout
+
+block title
+	h1(class="nobreak") Baptism Utility Database
+
+block content
+	table(class="table table-hover data-table")
+		thead
+			tr
+				th Last Name
+				th First Name
+				th CMF
+				th Method
+				th Baptismal Date
+				th Confirmation Date
+				th Stake
+				th Stake ID
+				th Unit
+				th Unit ID
+				th Senior Companion
+				th Junior Companion
+				th Third Companion
+				
+		tbody
+			- for(var i = 0; i < buds.length; i++){
+			tr
+				td=buds[i].lastName
+				td=buds[i].firstName
+				td=buds[i].cmf
+				td=buds[i].method
+				td=buds[i].bapDate
+				td=buds[i].confDate
+				td=buds[i].stakeName
+				td=buds[i].stakeID
+				td=buds[i].unitName
+				td=buds[i].unitID
+				td=buds[i].seniorCompanion
+				td=buds[i].juniorCompanion
+				td=buds[i].thirdCompanion
+			- }

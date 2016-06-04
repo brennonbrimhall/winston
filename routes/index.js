@@ -11,6 +11,78 @@ router.get('/', function(req, res, next) {
 	res.render('index', { title: 'Winston', format: format});
 });
 
+router.get('/buds/enter', function(req, res, next){
+	var dynamicRequire = require('../helpers/dynamicRequire.js');
+
+	var roster = dynamicRequire.readRoster();
+	var units = dynamicRequire.read('../buds/units.json');
+
+	if(typeof req.query['last-name'] === 'undefined'){
+		if(req.query['success'] == 'true'){
+			res.render('buds-enter', {title: 'Enter BUDs', alert: {type: 'success', title: 'Record Added!', body: 'I was able to add your record to the Baptism Utility Database.'}, roster: roster, units: units});
+		}else if(req.query['success'] == 'false'){
+			res.render('buds-enter', {title: 'Enter BUDs', alert: {type: 'danger', title: 'I Failed!', body: 'I wasn\'t able to add your record to the Baptism Utility Database.'}, roster: roster, units: units});
+		}else{
+			res.render('buds-enter', {title: 'Enter BUDs', roster: roster, units: units});
+		}
+
+	}else{
+		//Save this record!
+		var budRecord = {};
+		budRecord.lastName = req.query['last-name'];
+		budRecord.firstName = req.query['first-name'];
+		budRecord.cmf = req.query.cmf;
+		budRecord.method = req.query.method;
+		budRecord.bapDate = req.query['bap-date'];
+		budRecord.confDate = req.query['conf-date'];
+		
+		//Get Stake Name and ID number
+		budRecord.stakeName = req.query['stake'];
+
+		var stakeIndexNumber;
+		for(var i = 0; i < units.length; i++){
+			if(units[i].name == req.query['stake']){
+				budRecord.stakeID = units[i].id;
+				stakeIndexNumber = i;
+			}
+		}
+
+		//Get Unit Name and ID number
+		budRecord.unitName = req.query['unit'];
+		for(var i = 0; i < units[stakeIndexNumber].units.length; i++){
+			if(units[stakeIndexNumber].units[i].name == req.query['unit']){
+				budRecord.unitID = units[stakeIndexNumber].units[i].id;
+			}
+		}
+
+		budRecord.seniorCompanion = req.query['senior-companion'];
+		budRecord.juniorCompanion = req.query['junior-companion'];
+		budRecord.thirdCompanion = req.query['third-compainon'];
+
+		var buds;
+		try{
+			buds = dynamicRequire.readBUDs();
+		}catch(err){
+			console.log('Error when getting BUDS: '+err);
+			buds = [];
+		}
+
+		buds.push(budRecord);
+		dynamicRequire.writeBUDs(buds);
+		res.redirect('/buds/enter?success=true');
+	}
+});
+
+router.get('/buds/view', function(req, res, next){
+	var dynamicRequire = require('../helpers/dynamicRequire.js');
+
+	var roster = dynamicRequire.readRoster();
+	var units = dynamicRequire.read('../buds/units.json');
+	var buds = dynamicRequire.readBUDs();
+
+	res.render('buds-view', {title: 'View BUDs', buds: buds, units: units, roster: roster});
+});
+
 router.get('/miles', function(req, res, next){
 	var dynamicRequire = require('../helpers/dynamicRequire.js');
 	var datetime = require('../helpers/datetime.js');
@@ -172,6 +244,9 @@ router.get('/reports', function(req, res, next) {
 			numbers.push({recieved: Date.now(), phone: phoneNumber, report: report});
 		}
 
+		console.dir(numbers);
+		console.log('Saving numbers...');
+
 		dynamicRequire.writeWeeklyReport(date, numbers);
 
 		//var fs = require('fs');
@@ -188,9 +263,6 @@ router.get('/reports', function(req, res, next) {
 		}
 
 		res.redirect('/reports?success=true');
-		//res.render('reports', {phones: phones, config: config, alert: {type: 'success', title: 'Update successful!', body: 'Your numbers report was saved.  Do NOT refresh the page, or go back, as that will cause the '}});
-		//});
-
 
 	}else{
 		//No records to save
