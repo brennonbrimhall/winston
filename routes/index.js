@@ -348,9 +348,9 @@ router.get('/areas/:area', function(req, res, next) {
 		//Only should be one report in there in a week...
 		weeklyreport.forEach(function(currentValue, index, array){
 			if(currentValue.phone == phoneNumber){
-				data[0][i] = currentValue.report;
+				data[0][i] = parseInt(currentValue.report);
 				//Get the date in there, $ won't ever be used as an indicator
-				data[0][i]['$'] = lastMonday.getDate().toString()+'-'+(lastMonday.getMonth()+1).toString()+'-'+lastMonday.getFullYear().toString();
+				data[0][i]['$'] = lastMonday.getFullYear().toString()+'-'+(lastMonday.getMonth()+1).toString()+'-'+lastMonday.getDate().toString();
 			}
 		});
 		//Clean up, now let's set the date to a week previous.
@@ -373,8 +373,8 @@ router.get('/areas/:area', function(req, res, next) {
 				//Only should be one report in there in a week...
 				weeklyreport.forEach(function(currentValue, index, array){
 					if(currentValue.phone == phoneNumber){
-						data[t][w] = currentValue.report;
-						data[t][w]['$'] = lastMonday.getDate().toString()+'-'+(lastMonday.getMonth()+1).toString()+'-'+lastMonday.getFullYear().toString();
+						data[t][w] = parseInt(currentValue.report);
+						data[t][w]['$'] = lastMonday.getFullYear().toString()+'-'+(lastMonday.getMonth()+1).toString()+'-'+lastMonday.getDate().toString();
 					}
 				});
 				//Clean up, now let's set the date to a week previous.
@@ -445,12 +445,12 @@ router.get('/district/:district', function(req, res, next) {
 					if(typeof data[0][i][config[j].shortname] === 'undefined'){
 						data[0][i][config[j].shortname] = 0;
 					}
-					data[0][i][config[j].shortname] += currentValue.report[config[j].shortname];
+					data[0][i][config[j].shortname] += parseInt(currentValue.report[config[j].shortname]);
 				}
 
 				//data[0][i] += currentValue.report;
 				//Get the date in there, $ won't ever be used as an indicator
-				data[0][i]['$'] = lastMonday.getDate().toString()+'-'+(lastMonday.getMonth()+1).toString()+'-'+lastMonday.getFullYear().toString();
+				data[0][i]['$'] = lastMonday.getFullYear().toString()+'-'+(lastMonday.getMonth()+1).toString()+'-'+lastMonday.getDate().toString();
 			}
 		});
 		//Clean up, now let's set the date to a week previous.
@@ -477,13 +477,13 @@ router.get('/district/:district', function(req, res, next) {
 							if(typeof data[t][w][config[j].shortname] === 'undefined'){
 								data[t][w][config[j].shortname] = 0;
 							}
-							data[t][w][config[j].shortname] += currentValue.report[config[j].shortname];
+							data[t][w][config[j].shortname] += parseInt(currentValue.report[config[j].shortname]);
 						}
 					}
 
 					//data[0][i] += currentValue.report;
 					//Get the date in there, $ won't ever be used as an indicator
-					data[t][w]['$'] = lastMonday.getDate().toString()+'-'+(lastMonday.getMonth()+1).toString()+'-'+lastMonday.getFullYear().toString();
+					data[t][w]['$'] = lastMonday.getFullYear().toString()+'-'+(lastMonday.getMonth()+1).toString()+'-'+lastMonday.getDate().toString();
 				});
 				//Clean up, now let's set the date to a week previous.
 				lastMonday.setTime(lastMonday.getTime() - (7 * 24 * 60 * 60 * 1000));
@@ -564,12 +564,12 @@ router.get('/zone/:zone', function(req, res, next) {
 					if(typeof data[0][i][config[j].shortname] === 'undefined'){
 						data[0][i][config[j].shortname] = 0;
 					}
-					data[0][i][config[j].shortname] += currentValue.report[config[j].shortname];
+					data[0][i][config[j].shortname] += parseInt(currentValue.report[config[j].shortname]);
 				}
 
 				//data[0][i] += currentValue.report;
 				//Get the date in there, $ won't ever be used as an indicator
-				data[0][i]['$'] = lastMonday.getDate().toString()+'-'+(lastMonday.getMonth()+1).toString()+'-'+lastMonday.getFullYear().toString();
+				data[0][i]['$'] = lastMonday.getFullYear().toString()+'-'+(lastMonday.getMonth()+1).toString()+'-'+lastMonday.getDate().toString();
 			}
 		});
 		//Clean up, now let's set the date to a week previous.
@@ -596,13 +596,13 @@ router.get('/zone/:zone', function(req, res, next) {
 							if(typeof data[t][w][config[j].shortname] === 'undefined'){
 								data[t][w][config[j].shortname] = 0;
 							}
-							data[t][w][config[j].shortname] += currentValue.report[config[j].shortname];
+							data[t][w][config[j].shortname] += parseInt(currentValue.report[config[j].shortname]);
 						}
 					}
 
 					//data[0][i] += currentValue.report;
 					//Get the date in there, $ won't ever be used as an indicator
-					data[t][w]['$'] = lastMonday.getDate().toString()+'-'+(lastMonday.getMonth()+1).toString()+'-'+lastMonday.getFullYear().toString();
+					data[t][w]['$'] = lastMonday.getFullYear().toString()+'-'+(lastMonday.getMonth()+1).toString()+'-'+lastMonday.getDate().toString();
 				});
 				//Clean up, now let's set the date to a week previous.
 				lastMonday.setTime(lastMonday.getTime() - (7 * 24 * 60 * 60 * 1000));
@@ -714,7 +714,7 @@ router.get('/missiontotals', function(req, res, next) {
 				}
 				//report[i][config[j]['shortname']] = currentValue['report'][config[j]['shortname']];
 				//console.log('Adding '+currentValue['report'][config[j]['shortname']]+' to '+config[j]['shortname']+'s for '+reportingZone);
-				report[reportingZone][i][config[j]['shortname']] += currentValue['report'][config[j]['shortname']];
+				report[reportingZone][i][config[j]['shortname']] += parseInt(currentValue['report'][config[j]['shortname']]);
 			}
 
 			for(var j = 0; j < config.length; j++){
@@ -725,7 +725,7 @@ router.get('/missiontotals', function(req, res, next) {
 				if(typeof totals[i][config[j]['shortname']] === 'undefined'){
 					totals[i][config[j]['shortname']] = 0;
 				}
-				totals[i][config[j]['shortname']] += currentValue['report'][config[j]['shortname']];
+				totals[i][config[j]['shortname']] += parseInt(currentValue['report'][config[j]['shortname']]);
 			}
 		});
 

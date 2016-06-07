@@ -31,7 +31,7 @@ block title
 			- return "Dec";
 		- }
 	-}
-	h2(class="nobreak")=""+start.getDate().toString()+"-"+fullMonth(start).toString()+"-"+start.getFullYear().toString()+" to "+end.getDate().toString()+"-"+fullMonth(end)+"-"+end.getFullYear().toString()
+	h2(class="nobreak")=""+start.getFullYear().toString()+"-"+fullMonth(start).toString()+"-"+start.getDate().toString()+" to "+end.getFullYear().toString()+"-"+fullMonth(end)+"-"+end.getDate().toString()
 
 block content
 	table(class="table table-hover")
@@ -54,7 +54,7 @@ block content
 	- for (zone in report){
 	h3
 		a(class="captialize header-link" href="/zone/"+zone)=zone.toLowerCase()
-	h4(class="nobreak")=""+start.getDate().toString()+"-"+fullMonth(start).toString()+"-"+start.getFullYear().toString()+" to "+end.getDate().toString()+"-"+fullMonth(end)+"-"+end.getFullYear().toString()
+	h4(class="nobreak")=""+start.getFullYear().toString()+"-"+fullMonth(start).toString()+"-"+start.getDate().toString()+" to "+end.getFullYear().toString()+"-"+fullMonth(end)+"-"+end.getDate().toString()
 	table(class="table table-hover")
 		thead
 			tr
