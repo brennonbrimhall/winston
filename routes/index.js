@@ -80,6 +80,85 @@ router.get('/buds/enter', function(req, res, next){
 	}
 });
 
+router.get('/buds/edit/:id', function(req, res, next){
+	var dynamicRequire = require('../helpers/dynamicRequire.js');
+
+	var roster = dynamicRequire.readRoster();
+	var buds = dynamicRequire.readBUDs();
+	var units = dynamicRequire.read('../buds/units.json');
+
+	var id = req.params.id;
+
+	console.log(id);
+
+	if(typeof req.query['last-name'] === 'undefined'){
+		//Display a page for updating.
+
+		var record = buds[id];
+		record.id = id;
+		res.render('buds-edit', {title: 'Edit BUD record', record: record, roster: roster, units: units});
+
+		console.log(id);
+	}else{
+		//Update, redirect to view database.
+		var budRecord = {};
+		budRecord.lastName = req.query['last-name'];
+		budRecord.firstName = req.query['first-name'];
+		budRecord.cmf = req.query.cmf;
+		budRecord.method = req.query.method;
+		budRecord.bapDate = req.query['bap-date'];
+		budRecord.confDate = req.query['conf-date'];
+		
+		//Get Stake Name and ID number
+		budRecord.stakeName = req.query['stake'];
+
+		var stakeIndexNumber;
+		for(var i = 0; i < units.length; i++){
+			if(units[i].name == req.query['stake']){
+				budRecord.stakeID = units[i].id;
+				stakeIndexNumber = i;
+			}
+		}
+
+		//Get Unit Name and ID number
+		budRecord.unitName = req.query['unit'];
+		for(var i = 0; i < units[stakeIndexNumber].units.length; i++){
+			if(units[stakeIndexNumber].units[i].name == req.query['unit']){
+				budRecord.unitID = units[stakeIndexNumber].units[i].id;
+			}
+		}
+
+		budRecord.seniorCompanion = req.query['senior-companion'];
+		budRecord.juniorCompanion = req.query['junior-companion'];
+		budRecord.thirdCompanion = req.query['third-compainon'];
+
+		console.dir(budRecord);
+		console.log(req.params.id);
+		buds[req.params.id] = budRecord;
+
+		console.dir(buds);
+
+		dynamicRequire.writeBUDs(buds);
+
+		res.redirect('/buds/view');
+	}
+	
+});
+
+router.get('/buds/delete/:id', function(req, res, next){
+	var dynamicRequire = require('../helpers/dynamicRequire.js');
+	var buds = dynamicRequire.readBUDs();
+
+	var id = req.params.id;
+
+	buds.splice(id, 1);
+
+	dynamicRequire.writeBUDs(buds);
+
+	res.redirect('/buds/view');
+	
+});
+
 router.get('/buds/view', function(req, res, next){
 	var dynamicRequire = require('../helpers/dynamicRequire.js');
 

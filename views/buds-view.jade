@@ -20,6 +20,8 @@ block content
 				th Senior Companion
 				th Junior Companion
 				th Third Companion
+				th(class="noprint") Edit
+				th(class="noprint") Delete
 				
 		tbody
 			- for(var i = 0; i < buds.length; i++){
@@ -37,4 +39,8 @@ block content
 				td=buds[i].seniorCompanion
 				td=buds[i].juniorCompanion
 				td=buds[i].thirdCompanion
+				td
+					a(class="btn btn-warning no-print" href="/buds/edit/"+i) Edit
+				td
+					a(class="btn btn-danger no-print" href="/buds/delete/"+i) Delete
 			- }
