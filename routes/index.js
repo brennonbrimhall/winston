@@ -11,6 +11,13 @@ router.get('/', function(req, res, next) {
 	res.render('index', { title: 'Winston', format: format});
 });
 
+router.get('/reports/stl/war', function(req, res, next) {
+	var dynamicRequire = require('../helpers/dynamicRequire.js');
+
+	config = dynamicRequire.read('../weeklyreports/config.json');
+	res.render('stl-war', { title: 'Winston', config: config});
+});
+
 router.get('/buds/enter', function(req, res, next){
 	var dynamicRequire = require('../helpers/dynamicRequire.js');
 
@@ -389,6 +396,29 @@ router.get('/areas/:area', function(req, res, next) {
 
 });
 
+router.get('/district/:district/war', function (req, res, next){
+	var dynamicRequire = require('../helpers/dynamicRequire.js');
+	var areas = dynamicRequire.readAreas();
+	var config = dynamicRequire.readWeeklyReportConfig();
+
+	var districtData = {};
+
+	for(zone in areas){
+		for(district in areas[zone]){
+			if(district == req.params.district){
+				districtData = areas[zone][district];
+			}
+		}
+	}
+
+	res.render('district-war', 
+		{title: req.params.district, 
+			districtData: districtData,
+			companionships: Object.keys(districtData).length,
+			config: config
+		});
+});
+
 router.get('/district/:district', function(req, res, next) {
 	var dynamicRequire = require('../helpers/dynamicRequire.js');
 	var datetime = require('../helpers/datetime.js');
@@ -398,12 +428,12 @@ router.get('/district/:district', function(req, res, next) {
 	var data = [];
 	var districtData = {};
 
-	//First, we need to get the phone numbers for this zone, which we will
+	//First, we need to get the phone numbers for this district, which we will
 	//do by retrieving it from the directory of areas.
 	var districtName = req.params.district;
 	var phoneNumbers =[];
 
-	for (zone in areas) {
+	for(zone in areas) {
 		for(district in areas[zone]){
 			if(district == districtName){
 				districtData = areas[zone][district];
@@ -504,6 +534,26 @@ router.get('/district/:district', function(req, res, next) {
 			district: districtData, 
 			config: config,
 			numComps: phoneNumbers.length});
+});
+
+router.get('/zone/:zone/war', function (req, res, next){
+	var dynamicRequire = require('../helpers/dynamicRequire.js');
+	var areas = dynamicRequire.readAreas();
+	var config = dynamicRequire.readWeeklyReportConfig();
+
+	var zoneData = {};
+
+	for(zone in areas){
+		if(zone == req.params.zone){
+			zoneData = areas[zone];
+		}
+	}
+
+	res.render('zone-war', 
+		{title: req.params.zone, 
+			zoneData: zoneData,
+			config: config
+		});
 });
 
 router.get('/zone/:zone', function(req, res, next) {

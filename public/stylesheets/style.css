@@ -39,14 +39,14 @@ a.header-link {
     text-transform: capitalize;
 }
 
-h3 {
-    page-break-before: always;
-}
-
-.nobreak {
-    page-break-before: auto;
-}
-
 td, th {
     text-align: center;
+}
+
+h2 {
+    padding-top: +25px;
+}
+
+.float-right {
+    float: right;
 }

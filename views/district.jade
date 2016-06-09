@@ -4,6 +4,7 @@ block title
 	h1(class="nobreak captialize")=title.toLowerCase()
 
 block content
+	a(class="btn btn-primary float-right" href="./"+title+"/war") Print WAR
 	h2 District Information
 	div(class="panel panel-default")
 		div(class="panel-heading")
@@ -17,7 +18,7 @@ block content
 	h2 Totals
 	- for(var t = 0; t < data.length; t++){
 	- //Table for each transfer
-	table(class="table table-hover data-table")
+	table(class="table table-hover")
 		thead
 			tr
 				th Submitted
