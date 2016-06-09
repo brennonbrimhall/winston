@@ -1,0 +1,16 @@
+extends layout
+
+block scripts
+	script(src="/javascripts/year-to-date-chart.js")
+
+block title
+	h1(class="nobreak no-print")="Baptisms for "+(new Date()).getFullYear()
+
+block content
+	h2(class="print-break") Stake Totals
+	canvas(id="stake-totals")
+
+	- for(var i = 0; i < units.length; i++){
+	h2(class="print-break")=units[i].name
+	canvas(id=units[i].id)
+	- }

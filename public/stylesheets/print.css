@@ -1,0 +1,25 @@
+@media print{
+
+	body {
+		padding: 0mm;
+		font: 6pt "Lucida Grande", Helvetica, Arial, sans-serif;
+	}
+
+	canvas {
+		width: 100%;
+		height: auto;
+		padding-top: 3%;
+	}
+
+	.no-print{
+		display: none;
+	}
+
+	.print-break{
+		page-break-before: always;
+	}
+
+	.print-break-after{
+		page-break-after: always;
+	}
+}

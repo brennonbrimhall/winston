@@ -25,6 +25,9 @@ html
 		//Datatables JS
 		script(type="text/javascript" src="https://cdn.datatables.net/u/bs/jszip-2.5.0,pdfmake-0.1.18,dt-1.10.12,b-1.2.1,b-html5-1.2.1,b-print-1.2.1,fh-3.1.2,r-2.1.0/datatables.min.js")
 
+		//Chart.js JS
+		script(type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js")
+
 		//In-house CSS
 		link(rel='stylesheet', href='/stylesheets/style.css')
 		link(rel='stylesheet', href='/stylesheets/print.css')
@@ -76,6 +79,8 @@ html
 								ul(class="dropdown-menu")
 									li
 										a(href="/buds/year-to-date-baptisms") Year to Date Baptisms
+									li
+										a(href="/buds/graph") Print Year to Date Baptisms Chart
 									li
 										a(href="/buds/enter") Enter Record
 									li

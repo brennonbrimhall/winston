@@ -169,6 +169,57 @@ router.get('/buds/view', function(req, res, next){
 	res.render('buds-view', {title: 'View BUDs', buds: buds, units: units, roster: roster});
 });
 
+router.get('/buds/graph', function(req, res, next){
+	var dynamicRequire = require('../helpers/dynamicRequire.js');
+	var units = dynamicRequire.read('../buds/units.json');
+
+	res.render('buds-graph', {title: 'Baptisms Chart', units: units});
+});
+
+router.get('/buds/graph-data', function(req, res, next){
+	//Make data object to be loaded by AJAX to view chart.
+	var dynamicRequire = require('../helpers/dynamicRequire.js');
+
+	var roster = dynamicRequire.readRoster();
+	var units = dynamicRequire.read('../buds/units.json');
+	var buds = dynamicRequire.readBUDs();
+
+	for(var i = 0; i < units.length; i++){
+		units[i].baptisms = 0;
+		for(var j = 0; j < units[i].units.length; j++){
+			units[i].units[j].baptisms = 0;
+		}
+	}
+
+	var total = 0;
+
+	for(var i = 0; i < buds.length; i++){
+		var date = new Date(buds[i].confDate);
+		var now = new Date();
+
+		//If it is for this current year, add it to the units object
+		if(date.getFullYear() == now.getFullYear()){
+			//Go by unit numbers in case of boundary changes
+			for(var j = 0; j < units.length; j++){
+				if(units[j].id == buds[i].stakeID){
+					//Then increment the baptisms for the stake
+					units[j].baptisms++;
+					total++;
+					for(var k = 0; k < units[j].units.length; k++){
+						//Increment the baptisms for the ward
+						if(units[j].units[k].id == buds[i].unitID){
+							units[j].units[k].baptisms++;
+						}
+					}
+					
+				}
+			}
+		}
+	}
+
+	res.json({total: total, units: units});
+});
+
 router.get('/buds/year-to-date-baptisms', function(req, res, next){
 	var dynamicRequire = require('../helpers/dynamicRequire.js');
 
