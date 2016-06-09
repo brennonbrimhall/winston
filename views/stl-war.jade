@@ -1,0 +1,40 @@
+extends layout
+
+block scripts
+	script(src="/javascripts/print-page.js")
+
+block content	
+	- for(var w = 0; w < 6; w++){
+	
+	- if((w % 2) == 1){
+	h3(class="captialize")="STL Weekly Accountablility Report (Week "+(w+1)+")"
+	- }else{
+	h3(class="captialize print-break")="STL Weekly Accountablility Report (Week "+(w+1)+")"
+	-}
+	
+	table(class="table table-bordered table-condensed")
+		thead
+			tr
+				th(width="2%") #
+				th Companionship
+				- for(var i = 0; i < config.length; i++){
+				th=config[i].name
+				- }
+				th Total Lessons
+		tbody
+			- for(var i = 0; i < 10; i++){
+			tr
+				td=(i+1)
+				td
+				- for(var j = 0; j < config.length; j++){
+				td
+				- }
+				td
+			- }
+			tr
+				th(colspan="2") Totals
+				- for(var j = 0; j < config.length; j++){
+				td
+				- }
+				td
+	-}

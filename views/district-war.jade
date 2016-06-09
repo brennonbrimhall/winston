@@ -1,0 +1,38 @@
+extends layout
+
+block scripts
+	script(src="/javascripts/print-page.js")
+
+block content	
+	- for(var w = 0; w < 6; w++){
+	
+	- if((w % 2) == 1){
+	h3(class="captialize")=title.toLowerCase()+" - District Weekly Accountablility Report (Week "+(w+1)+")"
+	- }else{
+	h3(class="captialize print-break")=title.toLowerCase()+" - District Weekly Accountablility Report (Week "+(w+1)+")"
+	-}
+	
+	table(class="table table-bordered")
+		thead
+			tr
+				th Companionship
+				- for(var i = 0; i < config.length; i++){
+				th=config[i].name
+				- }
+				th Total Lessons
+		tbody
+			- for(area in districtData){
+			tr
+				td(class="captialize")=area.toLowerCase()
+				- for(var j = 0; j < config.length; j++){
+				td
+				- }
+				td
+			- }
+			tr
+				th Totals
+				- for(var j = 0; j < config.length; j++){
+				td
+				- }
+				td
+	-}

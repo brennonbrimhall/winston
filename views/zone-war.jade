@@ -1,0 +1,88 @@
+extends layout
+
+block scripts
+	script(src="/javascripts/print-page.js")
+
+block content	
+	- for(var w = 0; w < 6; w++){
+	h3(class="captialize print-break")=title.toLowerCase()+" - Zone Weekly Accountablility Report (Week "+(w+1)+")"
+
+	
+	table(class="table table-bordered table-condensed")
+		thead
+			tr
+				th Companionship
+				- for(var i = 0; i < config.length; i++){
+				th=config[i].name
+				- }
+				th Total Lessons
+		tbody
+			- for(var district in zoneData){
+			- for(var area in zoneData[district]){
+			tr
+				td(class="captialize")=area.toLowerCase()
+				- for(var j = 0; j < config.length; j++){
+				td
+				- }
+				td
+			- }
+			- }
+			tr
+				th Totals
+				- for(var j = 0; j < config.length; j++){
+				td
+				- }
+				td
+	
+	table(class="table table-bordered table-condensed")
+		thead
+			tr
+				th Miles
+				- for(var district in zoneData){
+				- for(var area in zoneData[district]){
+				th=area
+				- }
+				- }
+		tbody
+			tr
+				td Ending Odometer
+				- for(var district in zoneData){
+				- for(var area in zoneData[district]){
+				td=" "
+				- }
+				- }
+
+	table(class="table table-bordered table-condensed")
+		thead
+			tr
+				th(colspan="8") Baptisms this Week
+				th(colspan="8") Baptisms next Week
+				th(colspan="8") Baptisms in Two Weeks
+			tr
+				th Area
+				th Name
+				th Date
+				th(colspan="5") 5Q
+				th Area
+				th Name
+				th Date
+				th(colspan="5") 5Q
+				th Area
+				th Name
+				th Date
+				th(colspan="5") 5Q
+		tbody
+			-for(var i = 0; i < 6; i++){
+			tr
+				- for(var j = 0; j < 3; j++){
+				td
+				td
+				td
+				td(width="1%") 1
+				td(width="1%") 2
+				td(width="1%") 3
+				td(width="1%") 4
+				td(width="1%") 5
+				- }
+			-}
+	- }		
