@@ -1,7 +1,7 @@
 extends layout
 
 block title
-	h1(class="nobreak") Mission Totals
+	h1 Mission Totals
 
 
 	- var fullMonth = function(date){
@@ -31,9 +31,9 @@ block title
 			- return "Dec";
 		- }
 	-}
-	h2(class="nobreak")=""+start.getFullYear().toString()+"-"+fullMonth(start).toString()+"-"+start.getDate().toString()+" to "+end.getFullYear().toString()+"-"+fullMonth(end)+"-"+end.getDate().toString()
 
 block content
+	h2=""+start.getFullYear().toString()+"-"+fullMonth(start).toString()+"-"+start.getDate().toString()+" to "+end.getFullYear().toString()+"-"+fullMonth(end)+"-"+end.getDate().toString()
 	table(class="table table-hover")
 		thead
 			tr
@@ -52,7 +52,7 @@ block content
 
 	//Now for the zones...
 	- for (zone in report){
-	h3
+	h3(class="print-break")
 		a(class="captialize header-link" href="/zone/"+zone)=zone.toLowerCase()
 	h4(class="nobreak")=""+start.getFullYear().toString()+"-"+fullMonth(start).toString()+"-"+start.getDate().toString()+" to "+end.getFullYear().toString()+"-"+fullMonth(end)+"-"+end.getDate().toString()
 	table(class="table table-hover")
