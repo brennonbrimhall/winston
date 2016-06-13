@@ -46,6 +46,13 @@ $.getJSON('/buds/graph-data', function(data){
 			animation: false,
 			legend: {
 				display: false
+			},
+			scales: {
+				yAxes: [{
+					ticks: {
+						beginAtZero:true
+					}
+				}]
 			}
 		}
 	})
@@ -82,6 +89,13 @@ $.getJSON('/buds/graph-data', function(data){
 				animation: false,
 				legend: {
 					display: false
+				},
+				scales: {
+					yAxes: [{
+						ticks: {
+							beginAtZero:true
+						}
+					}]
 				}
 			}
 		})
