@@ -13,6 +13,11 @@ canvas {
 	padding-top: 3%;
 }
 
+img {
+	width: 100%;
+	height: auto;
+}
+
 .btn-file {
 	position: relative;
 	overflow: hidden;
@@ -55,4 +60,14 @@ h2 {
 
 .float-right {
 	float: right;
+}
+
+.glyphicon.glyphicon-one-fine-dot {
+    margin-bottom: +.8em;
+    overflow: hidden;
+}
+
+.glyphicon.glyphicon-one-fine-dot:before {
+    content: "\25cf";
+    font-size: 1.5em;
 }

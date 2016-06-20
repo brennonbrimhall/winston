@@ -1,0 +1,85 @@
+extends layout
+
+block scripts
+	link(rel='stylesheet', href='/stylesheets/non-responsive.css')
+
+block title
+	h1 Stake Missionary Report
+
+block content
+	div(class="smr")
+		h2(class="captialize header-link print-break") Stake Missionary Roster
+		- var date = new Date()
+		h3="Generated "+date.getFullYear().toString()+'-'+(date.getMonth()+1).toString()+'-'+date.getDate().toString()
+
+		- for(zone in areas){
+		- if(zone != 'MISSION OFFICE'){
+		- for(district in areas[zone]){
+		h2(class="captialize header-link print-break")=zone.toLowerCase()+" Zone, "+district.toLowerCase()+" District"
+		- for(area in areas[zone][district]){
+		div(class="panel panel-default print-together")
+			div(class="panel-heading captialize")=area.toLowerCase()
+			div(class="panel-body")
+				div(class="row")
+					- for(var i = 0; i < areas[zone][district][area].missionaries.length; i++){
+					- var transferPlanningRecord = {}, transferBoardRecord = {};
+
+					- var namesAreEqual = function(name1, name2){
+						- name1 = name1.toLowerCase();
+
+						- var bindex1 = name1.indexOf('-');
+						- var eindex1 = name1.indexOf(',');
+						- if(bindex1 !== -1 && bindex1 < eindex1){
+							- name1 = name1.substring(0, bindex1)+name1.substring(eindex1);
+						- }
+
+						- name2 = name2.toLowerCase();
+						- var bindex2 = name2.indexOf('-');
+						- var eindex2 = name2.indexOf(',');
+						- if(bindex2 !== -1 && bindex2 < eindex2){
+							- name2 = name2.substring(0, bindex2)+name2.substring(eindex2);
+						- }
+
+						- return name1.includes(name2) || name2.includes(name1);
+
+					- }
+					
+					- for(var j = 0; j < transferPlanning.length; j++){
+						- if(namesAreEqual(transferPlanning[j]['Missionary Name'], areas[zone][district][area].missionaries[i])){
+							- transferPlanningRecord = transferPlanning[j];
+						- }
+					- }
+					- for(var j = 0; j < transferBoard.length; j++){
+						- if(namesAreEqual(transferBoard[j]['Missionary Name'], areas[zone][district][area].missionaries[i])){
+							- transferBoardRecord = transferBoard[j];
+						- }
+					- }
+					- if(i == 0){
+					div(class="col-xs-"+(12-(3*areas[zone][district][area].missionaries.length)))
+						ul
+							li=areas[zone][district][area].phone
+							- if(transferBoardRecord['Area Address'] != ''){
+							li=transferBoardRecord['Area Address']	
+							- }
+							
+					- }
+					div(class="col-xs-3")
+						- var pic = 0;
+						- for(id in roster){
+							- if(areas[zone][district][area].missionaries[i] == roster[id].name){
+								- pic = id;
+							- }
+						- }
+						img(src="/images/"+pic+".jpeg" class="img-rounded smr")
+						div
+							- var numDots = Math.ceil(transferPlanningRecord['Weeks in Area']/6);
+							- for(var j = 0; j < numDots; j++){
+							span(class="glyphicon glyphicon-one-fine-dot")
+							- }
+						strong=areas[zone][district][area].missionaries[i]
+						p=roster[pic].position
+					-}
+		- }			
+		- }
+		- }
+		- }

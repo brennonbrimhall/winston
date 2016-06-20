@@ -11,6 +11,17 @@
 		padding-top: 3%;
 	}
 
+	img.smr {
+		width: .65in;
+		height: .9in;
+		padding: 0px;
+
+	}
+
+	div.smr {
+		font: 10pt "Lucida Grande", Helvetica, Arial, sans-serif;
+	}
+
 	.no-print{
 		display: none;
 	}
@@ -21,5 +32,9 @@
 
 	.print-break-after{
 		page-break-after: always;
+	}
+
+	.print-together{
+        page-break-inside: avoid;
 	}
 }

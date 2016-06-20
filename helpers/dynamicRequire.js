@@ -25,6 +25,14 @@ module.exports = {
 		return this.read('../buds/buds.json');
 	},
 
+	readTransferBoard: function(){
+		return this.read('../board/current.json');
+	},
+
+	readTransferPlanning: function(){
+		return this.read('../transfer-planning/current.json');
+	},
+
 	write: function(fileName, object){
 		var jsonfile = require('jsonfile');
 		jsonfile.writeFileSync(__dirname+'/'+fileName, object);
@@ -36,5 +44,17 @@ module.exports = {
 
 	writeBUDs: function(object){
 		this.write('../buds/buds.json', object);
+	},
+
+	writeTransferBoard: function(object){
+		var date = new Date();
+		this.write('../board/current.json', object);
+		this.write('../board/'+date.getFullYear().toString()+'-'+(date.getMonth()+1).toString()+'-'+date.getDate().toString()+'.json', object);
+	},
+
+	writeTransferPlanning: function(object){
+		var date = new Date();
+		this.write('../transfer-planning/current.json', object);
+		this.write('../transfer-planning/'+date.getFullYear().toString()+'-'+(date.getMonth()+1).toString()+'-'+date.getDate().toString()+'.json', object);
 	}
 }
