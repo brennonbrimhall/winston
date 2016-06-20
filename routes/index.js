@@ -7,15 +7,48 @@ var fs = require('fs');
 router.get('/', function(req, res, next) {
 	var dynamicRequire = require('../helpers/dynamicRequire.js');
 
-	format = dynamicRequire.read('../weeklyreports/config.json');
+	var format = dynamicRequire.read('../weeklyreports/config.json');
 	res.render('index', { title: 'Winston', format: format});
 });
 
 router.get('/reports/stl/war', function(req, res, next) {
 	var dynamicRequire = require('../helpers/dynamicRequire.js');
 
-	config = dynamicRequire.read('../weeklyreports/config.json');
+	var config = dynamicRequire.read('../weeklyreports/config.json');
 	res.render('stl-war', { title: 'Winston', config: config});
+});
+
+router.get('/reports/weekly/war', function(req, res, next) {
+	var dynamicRequire = require('../helpers/dynamicRequire.js');
+	var datetime = require('../helpers/datetime.js');
+	var areas = dynamicRequire.readAreas();
+	var config = dynamicRequire.readWeeklyReportConfig();
+
+	//Get all the data for this week...
+	var lastMonday = datetime.getLastMonday();
+	var reports = dynamicRequire.readWeeklyReport(lastMonday);
+
+	//Now, add the reports to the area object!
+	for(zone in areas){
+		if(zone !== 'MISSION OFFICE'){
+			for(district in areas[zone]){
+				for(area in areas[zone][district]){
+					//Find report by phone number
+					for(var i = 0; i < reports.length; i++){
+						if(areas[zone][district][area].phone == reports[i].phone){
+							areas[zone][district][area].report = {};
+							console.log("Found report for "+area);
+							areas[zone][district][area].report = reports[i].report;
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	console.log(JSON.stringify(areas, null, '\t'));
+
+	res.render('weekly-war', {title: 'Weekly WAR - '+datetime.getShortDate(lastMonday), areas: areas, lastMonday: lastMonday, config: config});
 });
 
 router.get('/reports/smr', function(req, res, next) {

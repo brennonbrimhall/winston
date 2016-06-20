@@ -25,5 +25,9 @@ module.exports = {
 		console.log(week);
 
 		return week;
+	},
+
+	getShortDate: function(date){
+		return date.getFullYear().toString()+'-'+(date.getMonth()+1).toString()+'-'+date.getDate().toString()
 	}
 }

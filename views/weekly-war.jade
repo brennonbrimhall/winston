@@ -1,0 +1,38 @@
+extends layout
+
+block title
+	h1(class="no-print")=title
+
+block scripts
+	script(src="/javascripts/print-page.js")
+
+block content
+	- for(zone in areas){
+	- if (zone != "MISSION OFFICE"){
+	h2(class="captialize print-break")=zone.toLowerCase()+" Zone ("+lastMonday.getFullYear().toString()+"-"+(lastMonday.getMonth()+1).toString()+"-"+lastMonday.getDate().toString()+")"
+	- for(district in areas[zone]){
+	div(class="print-together")
+		h3(class="captialize")=district.toLowerCase()
+		table(class="table table-hover")
+			thead
+				tr
+					th Area
+					- for(var i = 0; i < config.length; i++){
+					th=config[i].name
+					- }
+			tbody
+			- for(area in areas[zone][district]){
+				tr
+					td(class="captialize")=area.toLowerCase()
+					- for(var i = 0; i < config.length; i++){
+					- if(typeof areas[zone][district][area].report === 'undefined'){
+					td --
+					- }else{
+					td=areas[zone][district][area].report[config[i].shortname]
+					- }
+					- }
+			- }
+	- }
+	- }
+	- }
+	
