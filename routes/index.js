@@ -560,6 +560,7 @@ router.get('/areas/:area', function(req, res, next) {
 
 	//If this is week 1, we need to get all of last transfer;
 	//otherwise, just get this transfers'.
+	var weeksBackToGet;
 	if(week == 0){
 		weeksBackToGet = 6;
 	}else{
@@ -579,7 +580,7 @@ router.get('/areas/:area', function(req, res, next) {
 		//Only should be one report in there in a week...
 		weeklyreport.forEach(function(currentValue, index, array){
 			if(currentValue.phone == phoneNumber){
-				data[0][i] = parseInt(currentValue.report);
+				data[0][i] = currentValue.report;
 				//Get the date in there, $ won't ever be used as an indicator
 				data[0][i]['$'] = lastMonday.getFullYear().toString()+'-'+(lastMonday.getMonth()+1).toString()+'-'+lastMonday.getDate().toString();
 			}
@@ -589,7 +590,7 @@ router.get('/areas/:area', function(req, res, next) {
 	}	
 
 	//Now to get the other weeks.
-	for(var t = 1; t < 6; t++){
+	/*for(var t = 1; t < 6; t++){
 		for(var w = 0; w < 6; w++){
 			//Now, we could theoretically bump back before Winston has records.
 			try {
@@ -614,7 +615,7 @@ router.get('/areas/:area', function(req, res, next) {
 				console.log(e);
 			}
 		}
-	}
+	}*/
 
 	res.render('area', {title: areaName, data: data, area: areaData, config: config});
 
