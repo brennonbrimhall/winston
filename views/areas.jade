@@ -8,8 +8,10 @@ block content
 	- Object.keys(areas).forEach(function(zone, index) {
 	//Verify that this isn't the office
 	- if(zone != 'MISSION OFFICE'){
-	h2
-		a(class="captialize header-link" href="/zone/"+zone)=zone.toLowerCase()
+		a(class="btn btn-primary btn-right captialize" href="/zone/"+zone+"/war") Print Blank WARs
+		a(class="btn btn-primary btn-right captialize" href="/reports/weekly/war?zone="+zone) Print Weekly WAR
+		h2
+			a(class="captialize header-link" href="/zone/"+zone)=zone.toLowerCase()
 	- Object.keys(areas[zone]).forEach(function(district, index) {
 	div(class="panel panel-default")
 		div(class="panel-heading")

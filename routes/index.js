@@ -28,6 +28,12 @@ router.get('/reports/weekly/war', function(req, res, next) {
 	var lastMonday = datetime.getLastMonday();
 	var reports = dynamicRequire.readWeeklyReport(lastMonday);
 
+	//See if we have a zone to get for...
+	var reportForZone = '';
+	if(typeof req.query.zone !== 'undefined'){
+		reportForZone = req.query.zone;
+	}
+
 	//Now, add the reports to the area object!
 	for(zone in areas){
 		if(zone !== 'MISSION OFFICE'){
@@ -92,9 +98,9 @@ router.get('/reports/weekly/war', function(req, res, next) {
 		}
 	}
 	
-	console.log(JSON.stringify(areas, null, '\t'));
+	console.log(reportForZone);
 
-	res.render('weekly-war', {title: 'Weekly WAR - '+datetime.getShortDate(lastMonday), areas: areas, lastMonday: lastMonday, config: config});
+	res.render('weekly-war', {title: 'Weekly WAR - '+datetime.getShortDate(lastMonday), areas: areas, lastMonday: lastMonday, config: config, reportForZone: reportForZone});
 });
 
 router.get('/reports/smr', function(req, res, next) {

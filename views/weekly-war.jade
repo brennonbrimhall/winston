@@ -8,7 +8,7 @@ block scripts
 
 block content
 	- for(zone in areas){
-	- if (zone != "MISSION OFFICE" && zone != 'report'){
+	- if (zone != "MISSION OFFICE" && zone != 'report' && (zone === '' || zone === reportForZone)){
 	h2(class="captialize print-break")=zone.toLowerCase()+" Zone ("+lastMonday.getFullYear().toString()+"-"+(lastMonday.getMonth()+1).toString()+"-"+lastMonday.getDate().toString()+")"
 	- for(district in areas[zone]){
 	- if(district != "report"){

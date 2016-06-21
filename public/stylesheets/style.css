@@ -71,3 +71,8 @@ h2 {
     content: "\25cf";
     font-size: 1.5em;
 }
+
+.btn-right {
+	float: right;
+	margin: 10px;
+}
