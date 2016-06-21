@@ -42,6 +42,10 @@ module.exports = {
 		this.write('../weeklyreports/'+date.getDate().toString()+'-'+(date.getMonth()+1).toString()+'-'+date.getFullYear().toString()+'.json', object);
 	},
 
+	writeWeeklyReportConfig: function(object){
+		this.write('../weeklyreports/config.json', object);
+	},
+
 	writeBUDs: function(object){
 		this.write('../buds/buds.json', object);
 	},

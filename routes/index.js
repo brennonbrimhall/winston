@@ -11,6 +11,57 @@ router.get('/', function(req, res, next) {
 	res.render('index', { title: 'Winston', format: format});
 });
 
+router.get('/numbers/keyindicators', function(req, res, next) {
+	var dynamicRequire = require('../helpers/dynamicRequire.js');
+
+	var config = dynamicRequire.read('../weeklyreports/config.json');
+	res.render('key-indicators', {title: 'Manage Key Indicators', config: config});
+});
+
+router.get('/numbers/keyindicators/add', function(req, res, next) {
+	var dynamicRequire = require('../helpers/dynamicRequire.js');
+	var config = dynamicRequire.read('../weeklyreports/config.json');
+	
+	if(typeof req.query.name !== 'undefined' && typeof req.query.shortname !== 'undefined'){
+		config.push({name: req.query.name, shortname: req.query.shortname});
+		dynamicRequire.writeWeeklyReportConfig(config);
+
+		res.redirect('/numbers/keyindicators');
+	}else{
+		res.render('key-indicators-add', {title: 'Add Key Indicator'});
+	}
+});
+
+router.get('/numbers/keyindicators/edit/:id', function(req, res, next) {
+	var dynamicRequire = require('../helpers/dynamicRequire.js');
+	var config = dynamicRequire.read('../weeklyreports/config.json');
+
+	var id = req.params.id;
+
+	if(typeof req.query.name !== 'undefined' && typeof req.query.shortname !== 'undefined'){
+		config[id].name = req.query.name;
+		config[id].shortname = req.query.shortname;
+
+		dynamicRequire.writeWeeklyReportConfig(config);
+
+		res.redirect('/numbers/keyindicators');
+	}else{
+		res.render('key-indicators-edit', {title: 'Edit Key Indicator', name: config[id].name, shortname: config[id].shortname, id: id});
+	}
+});
+
+router.get('/numbers/keyindicators/delete/:id', function(req, res, next) {
+	var dynamicRequire = require('../helpers/dynamicRequire.js');
+	var config = dynamicRequire.read('../weeklyreports/config.json');
+
+	var id = req.params.id;
+	config.splice(id, 1);
+
+	dynamicRequire.writeWeeklyReportConfig(config);
+
+	res.redirect('/numbers/keyindicators');
+});
+
 router.get('/reports/stl/war', function(req, res, next) {
 	var dynamicRequire = require('../helpers/dynamicRequire.js');
 
@@ -431,7 +482,7 @@ router.get('/miles', function(req, res, next){
 	res.render('miles', {title: 'Month End Miles', data: data, reportedDate: lastMonday});
 });
 
-router.get('/tocall', function(req, res, next) {
+router.get('/numbers/tocall', function(req, res, next) {
 	var dynamicRequire = require('../helpers/dynamicRequire.js');
 	var datetime = require('../helpers/datetime.js');
 
@@ -476,7 +527,7 @@ router.get('/tocall', function(req, res, next) {
 
 });
 
-router.get('/reports', function(req, res, next) {
+router.get('/numbers/reports', function(req, res, next) {
 	var dynamicRequire = require('../helpers/dynamicRequire.js');
 
 	if(typeof req.query.phone !== 'undefined'){
@@ -575,7 +626,7 @@ router.get('/reports', function(req, res, next) {
 });
 
 //Populate the areas with who is serving there
-router.get('/areas', function(req, res, next) {
+router.get('/numbers/areas', function(req, res, next) {
 	var dynamicRequire = require('../helpers/dynamicRequire.js');
 	var areas = dynamicRequire.readAreas();
 	res.render('areas', {title: 'Areas', areas: areas});	

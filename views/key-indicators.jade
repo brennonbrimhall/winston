@@ -1,0 +1,24 @@
+extends layout
+
+block title
+	h1=title
+
+block content
+	a(class="btn btn-success btn-right no-print" href="/numbers/keyindicators/add") Add Key Indicator
+	table(class="table table-hover")
+		thead
+			tr
+				th Name
+				th Shortname
+				th Edit
+				th Delete
+		tbody
+		- for(var i = 0; i < config.length; i++){
+			tr
+				td=config[i].name
+				td=config[i].shortname
+				td
+					a(class="btn btn-warning no-print" href="/numbers/keyindicators/edit/"+i) Edit
+				td
+					a(class="btn btn-danger no-print" href="/numbers/keyindicators/delete/"+i) Delete
+		- }
