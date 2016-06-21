@@ -37,8 +37,54 @@ router.get('/reports/weekly/war', function(req, res, next) {
 					for(var i = 0; i < reports.length; i++){
 						if(areas[zone][district][area].phone == reports[i].phone){
 							areas[zone][district][area].report = {};
-							console.log("Found report for "+area);
 							areas[zone][district][area].report = reports[i].report;
+
+							//Now, add totals to mission, zone, and district
+							if(typeof areas.report === 'undefined'){
+								areas.report = {};
+								for(var j = 0; j < config.length; j++){
+									areas.report[config[j].shortname] = 0;
+								}
+							}
+
+							for(var j = 0; j < config.length; j++){
+								var value = areas[zone][district][area].report[config[j].shortname];
+								if(typeof value === 'undefined'){
+									value = 0;
+								}
+								areas.report[config[j].shortname] += parseInt(value);
+							}
+
+							if(typeof areas[zone].report === 'undefined'){
+								areas[zone].report = {};
+								for(var j = 0; j < config.length; j++){
+									areas[zone].report[config[j].shortname] = 0;
+								}
+							}
+
+							for(var j = 0; j < config.length; j++){
+								var value = areas[zone][district][area].report[config[j].shortname];
+								if(typeof value === 'undefined'){
+									value = 0;
+								}
+								areas[zone].report[config[j].shortname] += parseInt(value);
+							}
+
+							if(typeof areas[zone][district].report === 'undefined'){
+								areas[zone][district].report = {};
+								for(var j = 0; j < config.length; j++){
+									areas[zone][district].report[config[j].shortname] = 0;
+								}
+							}
+
+							for(var j = 0; j < config.length; j++){
+								var value = areas[zone][district][area].report[config[j].shortname];
+								if(typeof value === 'undefined'){
+									value = 0;
+								}
+								areas[zone][district].report[config[j].shortname] += parseInt(value);
+							}
+
 						}
 					}
 				}

@@ -8,9 +8,10 @@ block scripts
 
 block content
 	- for(zone in areas){
-	- if (zone != "MISSION OFFICE"){
+	- if (zone != "MISSION OFFICE" && zone != 'report'){
 	h2(class="captialize print-break")=zone.toLowerCase()+" Zone ("+lastMonday.getFullYear().toString()+"-"+(lastMonday.getMonth()+1).toString()+"-"+lastMonday.getDate().toString()+")"
 	- for(district in areas[zone]){
+	- if(district != "report"){
 	div(class="print-together")
 		h3(class="captialize")=district.toLowerCase()
 		table(class="table table-hover")
@@ -22,17 +23,75 @@ block content
 					- }
 			tbody
 			- for(area in areas[zone][district]){
+			- if(area != "report"){
 				tr
 					td(class="captialize")=area.toLowerCase()
 					- for(var i = 0; i < config.length; i++){
 					- if(typeof areas[zone][district][area].report === 'undefined'){
-					td --
+					td="--"
 					- }else{
 					td=areas[zone][district][area].report[config[i].shortname]
 					- }
 					- }
 			- }
+			- }
+				tr
+					th District Total (Average)
+					- for(var i = 0; i < config.length; i++){
+					- if(typeof areas[zone][district].report !== 'undefined'){
+					th=areas[zone][district].report[config[i].shortname]+" ("+(areas[zone][district].report[config[i].shortname]/(Object.keys(areas[zone][district]).length-1)).toFixed(2)+")"
+					- }else{
+					th --
+					- }
+					- }
 	- }
+	- }
+	div(class="print-together")
+		h3 Zone Totals
+		table(class="table table-hover")
+			thead
+				tr
+					th Statistic
+					- for(var i = 0; i < config.length; i++){
+					th=config[i].name
+					- }
+			tbody
+				tr
+					th Total
+					- for(var i = 0; i < config.length; i++){
+					- if(typeof areas[zone].report !== 'undefined'){
+					td=areas[zone].report[config[i].shortname]
+					- }else{
+					td --
+					- }
+					- }
+				tr
+					th District Average
+					- for(var i = 0; i < config.length; i++){
+					- if(typeof areas[zone].report !== 'undefined'){
+					//td=(Math.round(areas[zone].report[config[i].shortname]/(Object.keys(areas[zone])-1).length*100))
+					td=(areas[zone].report[config[i].shortname]/(Object.keys(areas[zone]).length-1)).toFixed(2)
+					- }else{
+					td --
+					- }
+					- }
+				tr
+					th Companionship Average
+					//Get the number of companionships
+					- var numberOfCompanionships = 0;
+					- for(district in areas[zone]){
+						- if(district !== "report"){
+							- numberOfCompanionships += (Object.keys(areas[zone][district]).length-1)
+						- }
+					- }
+					- for(var i = 0; i < config.length; i++){
+					- if(typeof areas[zone].report !== 'undefined'){
+					
+					td=(areas[zone].report[config[i].shortname]/numberOfCompanionships).toFixed(2)
+					- }else{
+					td --
+					- }
+					- }
 	- }
 	- }
 	
