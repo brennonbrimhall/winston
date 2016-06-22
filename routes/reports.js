@@ -32,8 +32,22 @@ router.get('/reports/weekly/war', function(req, res, next) {
 					//Find report by phone number
 					for(var i = 0; i < reports.length; i++){
 						if(areas[zone][district][area].phone == reports[i].phone){
+							//Get total lessons
+							var totalLessons = 0;
+							for(var j = 0; j < config.length; j++){
+								if(config[j].totallessons){
+									totalLessons += parseInt(reports[i].report[config[j].shortname]);
+								}
+							}
+
+							//Sneak total lessons in...
+							config.push({name: "Total Lessons", shortname: "tl", totallessons: false});
+
 							areas[zone][district][area].report = {};
 							areas[zone][district][area].report = reports[i].report;
+
+							//Sneak total lessons in
+							areas[zone][district][area].report.tl = totalLessons;
 
 							//Now, add totals to mission, zone, and district
 							if(typeof areas.report === 'undefined'){
@@ -81,6 +95,9 @@ router.get('/reports/weekly/war', function(req, res, next) {
 								areas[zone][district].report[config[j].shortname] += parseInt(value);
 							}
 
+							//Sneak total lessons out...
+							config.pop();
+
 						}
 					}
 				}
@@ -89,6 +106,9 @@ router.get('/reports/weekly/war', function(req, res, next) {
 	}
 	
 	console.log(reportForZone);
+
+	//Sneak total lessons in again...
+	config.push({name: "Total Lessons", shortname: "tl", totallessons: false});
 
 	res.render('weekly-war', {title: 'Weekly WAR - '+datetime.getShortDate(lastMonday), areas: areas, lastMonday: lastMonday, config: config, reportForZone: reportForZone});
 });
