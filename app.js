@@ -37,7 +37,7 @@ var imap = {
 };
 
 //n represents our imap connection
-/*var n = notifier(imap);
+var n = notifier(imap);
 n.on('end', function(){
 	n.start();
 }).on('mail', function(mail){
@@ -197,7 +197,7 @@ n.on('end', function(){
 		n.start();	
 	}, 60000);
 	
-}).start();*/
+}).start();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -208,6 +208,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/users', users);
+app.use('/', require('./routes/buds.js'));
+app.use('/', require('./routes/import.js'));
+app.use('/', require('./routes/numbers.js'));
+app.use('/', require('./routes/buds.js'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
