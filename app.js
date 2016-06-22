@@ -212,6 +212,7 @@ app.use('/', require('./routes/buds.js'));
 app.use('/', require('./routes/import.js'));
 app.use('/', require('./routes/numbers.js'));
 app.use('/', require('./routes/buds.js'));
+app.use('/', require('./routes/reports.js'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
