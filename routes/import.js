@@ -15,6 +15,7 @@ router.get('/import', function(req, res, next) {
 });
 
 router.post('/import/roster', function(req, res, next){
+	var dynamicRequire = require('../helpers/dynamicRequire.js');
 	//Load the file into our database!
 	//The roster is saved, open and parse with module xlsx
 	
@@ -149,16 +150,10 @@ router.post('/import/roster', function(req, res, next){
 		//Writing one file as this with a timestamp, then writing it as currentorganization.json
 		var timestamp = Date.now();
 
-		fs.writeFile('./rosters/'+timestamp+'.json', JSON.stringify(roster), function(){
-			fs.writeFile('./rosters/current.json', JSON.stringify(roster), function(){
-				fs.writeFile('./areas/'+timestamp+'.json', JSON.stringify(areas), function(){
-					fs.writeFile('./areas/current.json', JSON.stringify(areas), function(){
-						//TODO: Write cleanup code for uploads.
-						res.render('import', { title: 'Areas', alert: {type: 'success', title: 'Upload successful!', body: 'Your upload of '+req.files.uploadroster.filename+' was successful!'} });
-					});
-				});	
-			});		
-		});
+		dynamicRequire.writeRoster(roster);
+		dynamicRequire.writeAreas(areas);
+
+		res.render('import', { title: 'Areas', alert: {type: 'success', title: 'Upload successful!', body: 'Your upload of '+req.files.uploadroster.filename+' was successful!'} });
 	}else{
 		res.render('import', { title: 'Areas', alert: {type: 'danger', title: 'Upload failed!', body: 'I\'m sorry, but your upload of '+req.files.uploadroster.filename+' was unsuccessful.  Are you sure that it is a .xlsx file?'} });
 	}

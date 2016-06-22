@@ -6,7 +6,7 @@ module.exports = {
 	},
 
 	readWeeklyReport: function(date){
-		return this.read('../weeklyreports/'+date.getDate().toString()+'-'+(date.getMonth()+1).toString()+'-'+date.getFullYear().toString()+'.json')
+		return this.read('../weeklyreports/'+date.getFullYear().toString()+'-'+(date.getMonth()+1).toString()+'-'+date.getDate().toString()+'.json')
 	},
 
 	readWeeklyReportConfig: function(){
@@ -39,11 +39,23 @@ module.exports = {
 	},
 
 	writeWeeklyReport: function(date, object){
-		this.write('../weeklyreports/'+date.getDate().toString()+'-'+(date.getMonth()+1).toString()+'-'+date.getFullYear().toString()+'.json', object);
+		this.write('../weeklyreports/'+date.getFullYear().toString()+'-'+(date.getMonth()+1).toString()+'-'+date.getDate().toString()+'.json', object);
 	},
 
 	writeWeeklyReportConfig: function(object){
 		this.write('../weeklyreports/config.json', object);
+	},
+
+	writeAreas: function(object){
+		var date = new Date();
+		this.write('../areas/'+date.getFullYear().toString()+'-'+(date.getMonth()+1).toString()+'-'+date.getDate().toString()+'.json', object);
+		this.write('../areas/current.json', object);
+	},
+
+	writeRoster: function(object){
+		var date = new Date();
+		this.write('../rosters/'+date.getFullYear().toString()+'-'+(date.getMonth()+1).toString()+'-'+date.getDate().toString()+'.json', object);
+		this.write('../rosters/current.json', object);
 	},
 
 	writeBUDs: function(object){
