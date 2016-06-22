@@ -29,5 +29,9 @@ module.exports = {
 
 	getShortDate: function(date){
 		return date.getFullYear().toString()+'-'+(date.getMonth()+1).toString()+'-'+date.getDate().toString()
+	},
+
+	getWeekLater: function(date){
+		return date.setTime(date.getTime() - (7 * 24 * 60 * 60 * 1000));
 	}
 }

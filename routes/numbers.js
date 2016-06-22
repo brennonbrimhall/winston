@@ -13,7 +13,7 @@ router.get('/numbers/keyindicators/add', function(req, res, next) {
 	var config = dynamicRequire.read('../weeklyreports/config.json');
 	
 	if(typeof req.query.name !== 'undefined' && typeof req.query.shortname !== 'undefined'){
-		config.push({name: req.query.name, shortname: req.query.shortname});
+		config.push({name: req.query.name, shortname: req.query.shortname, totallessons: false});
 		dynamicRequire.writeWeeklyReportConfig(config);
 
 		res.redirect('/numbers/keyindicators');
