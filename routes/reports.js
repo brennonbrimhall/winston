@@ -100,10 +100,23 @@ router.get('/reports/smr', function(req, res, next) {
 	var roster = dynamicRequire.readRoster();
 	var transferPlanning = dynamicRequire.readTransferPlanning();
 	var transferBoard = dynamicRequire.readTransferBoard();
+	
+	var reportsUpdated = {};
+	reportsUpdated.areas = dynamicRequire.getAreasDateModified();
+	reportsUpdated.transferPlanning = dynamicRequire.getTransferPlanningDateModified();
+	console.log(reportsUpdated.transferPlanning);
+	reportsUpdated.board = dynamicRequire.getTransferBoardDateModified();
+	console.log(reportsUpdated.board);
 
-	console.dir(transferPlanning);
+	//See if we have a zone to get for...
+	var reportForZone = '';
+	if(typeof req.query.zone !== 'undefined'){
+		reportForZone = req.query.zone;
+	}
 
-	res.render('smr', {title: 'Winston', areas: areas, roster: roster, transferPlanning: transferPlanning, transferBoard: transferBoard});
+	//console.dir(transferPlanning);
+
+	res.render('smr', {title: 'Mission Directory', areas: areas, roster: roster, transferPlanning: transferPlanning, transferBoard: transferBoard, reportForZone: reportForZone, reportsUpdated: reportsUpdated});
 });
 
 module.exports = router;

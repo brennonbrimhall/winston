@@ -2,18 +2,27 @@ extends layout
 
 block scripts
 	link(rel='stylesheet', href='/stylesheets/non-responsive.css')
+	script(src="/javascripts/print-page.js")
 
 block title
-	h1 Stake Missionary Report
+	h1 Mission Directory
 
 block content
 	div(class="smr")
-		h2(class="captialize header-link print-break") Stake Missionary Roster
+		- if(reportForZone === ''){
+		h2(class="captialize header-link print-break") Mission Directory
+		- }else{
+		h2(class="captialize header-link print-break")="Mission Directory, "+reportForZone.toLowerCase()+" Zone"
+		- }
 		- var date = new Date()
-		h3="Generated "+date.getFullYear().toString()+'-'+(date.getMonth()+1).toString()+'-'+date.getDate().toString()
+		h3="Generated "+date.getFullYear().toString()+'-'+(date.getMonth()+1).toString()+'-'+date.getDate().toString()+ " from"
+			ul
+				li="Companionship Roster - last imported "+reportsUpdated.areas.getFullYear().toString()+'-'+(reportsUpdated.areas.getMonth()+1).toString()+'-'+reportsUpdated.areas.getDate().toString()
+				li="Transfer Board last - last imported "+reportsUpdated.board.getFullYear().toString()+'-'+(reportsUpdated.board.getMonth()+1).toString()+'-'+reportsUpdated.board.getDate().toString()
+				li="Transfer Planning - last imported "+reportsUpdated.transferPlanning.getFullYear().toString()+'-'+(reportsUpdated.transferPlanning.getMonth()+1).toString()+'-'+reportsUpdated.transferPlanning.getDate().toString()
 
 		- for(zone in areas){
-		- if(zone != 'MISSION OFFICE'){
+		- if(zone != 'MISSION OFFICE' && (reportForZone === '' || zone === reportForZone)){
 		- for(district in areas[zone]){
 		h2(class="captialize header-link print-break")=zone.toLowerCase()+" Zone, "+district.toLowerCase()+" District"
 		- for(area in areas[zone][district]){
