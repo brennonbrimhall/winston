@@ -72,5 +72,27 @@ module.exports = {
 		var date = new Date();
 		this.write('../transfer-planning/current.json', object);
 		this.write('../transfer-planning/'+date.getFullYear().toString()+'-'+(date.getMonth()+1).toString()+'-'+date.getDate().toString()+'.json', object);
+	},
+
+	getDateModified: function(fileName){
+		var fs = require('fs');
+		var util = require('util');
+		var stats = fs.statSync(__dirname+'/'+fileName);
+		var mtime = new Date(util.inspect(stats.mtime));
+		return mtime;
+	},
+
+	getAreasDateModified: function(){
+		return this.getDateModified('../areas/current.json');
+	},
+
+	getTransferBoardDateModified: function(){
+		var date = this.getDateModified('../board/current.json');
+		return date;
+	},
+
+	getTransferPlanningDateModified: function(){
+		var date = this.getDateModified('../transfer-planning/current.json');
+		return date;
 	}
 }

@@ -2,6 +2,7 @@ extends layout
 
 block title
 	a(class="btn btn-primary btn-right captialize" href="/reports/weekly/war") Print Mission Weekly WAR
+	a(class="btn btn-primary btn-right captialize" href="/reports/smr") Print Mission Directory
 	h1
 		a(class="header-link" href="/missiontotals") Mission Totals
 
@@ -11,6 +12,7 @@ block content
 	- if(zone != 'MISSION OFFICE'){
 		a(class="btn btn-primary btn-right captialize" href="/zone/"+zone+"/war") Print Blank WARs
 		a(class="btn btn-primary btn-right captialize" href="/reports/weekly/war?zone="+zone) Print Weekly WAR
+		a(class="btn btn-primary btn-right captialize" href="/reports/smr?zone="+zone) Print Directory
 		h2
 			a(class="captialize header-link" href="/zone/"+zone)=zone.toLowerCase()
 	- Object.keys(areas[zone]).forEach(function(district, index) {
