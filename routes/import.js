@@ -251,4 +251,23 @@ router.post('/import/transfer-planning', function(req, res, next){
 	}
 });
 
+router.post('/import/picture', function(req, res, next){
+	var dynamicRequire = require('../helpers/dynamicRequire.js');
+	//Load the file into our database!
+	//The roster is saved, open and parse with module xlsx
+	console.dir(req.files);
+	
+	//Verifying that we are looking at an excel file!
+	if(req.files.picture.mimetype == 'image/jpeg'){
+		//Parsing it with xlsx module
+		var fs = require('fs');
+		fs.renameSync(req.files.picture.file, __dirname+'/../public/images/'+req.body.id+'.jpeg')
+		//fs.writeFileSync(__dirname+'/../public/images/'+req.body.id+'.jpeg', fs.readFileSync(req.files.picture.file), {encoding: null});
+		//res.json(req.body);
+		res.redirect('/import?success=true')
+	}else{
+		res.redirect('/import?success=false');
+	}
+});
+
 module.exports = router;
