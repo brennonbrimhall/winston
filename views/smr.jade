@@ -21,16 +21,17 @@ block content
 				li="Transfer Board last - last imported "+reportsUpdated.board.getFullYear().toString()+'-'+(reportsUpdated.board.getMonth()+1).toString()+'-'+reportsUpdated.board.getDate().toString()
 				li="Transfer Planning - last imported "+reportsUpdated.transferPlanning.getFullYear().toString()+'-'+(reportsUpdated.transferPlanning.getMonth()+1).toString()+'-'+reportsUpdated.transferPlanning.getDate().toString()
 
-		- for(zone in areas){
+		- for(group in areas){
+		- for(zone in areas[group]){
 		- if(zone != 'MISSION OFFICE' && (reportForZone === '' || zone === reportForZone)){
-		- for(district in areas[zone]){
+		- for(district in areas[group][zone]){
 		h2(class="captialize header-link print-break")=zone.toLowerCase()+" Zone, "+district.toLowerCase()+" District"
-		- for(area in areas[zone][district]){
+		- for(area in areas[group][zone][district]){
 		div(class="panel panel-default print-together")
 			div(class="panel-heading captialize")=area.toLowerCase()
 			div(class="panel-body")
 				div(class="row")
-					- for(var i = 0; i < areas[zone][district][area].missionaries.length; i++){
+					- for(var i = 0; i < areas[group][zone][district][area].missionaries.length; i++){
 					- var transferPlanningRecord = {}, transferBoardRecord = {};
 
 					- var namesAreEqual = function(name1, name2){
@@ -54,19 +55,19 @@ block content
 					- }
 					
 					- for(var j = 0; j < transferPlanning.length; j++){
-						- if(namesAreEqual(transferPlanning[j]['Missionary Name'], areas[zone][district][area].missionaries[i])){
+						- if(namesAreEqual(transferPlanning[j]['Missionary Name'], areas[group][zone][district][area].missionaries[i])){
 							- transferPlanningRecord = transferPlanning[j];
 						- }
 					- }
 					- for(var j = 0; j < transferBoard.length; j++){
-						- if(namesAreEqual(transferBoard[j]['Missionary Name'], areas[zone][district][area].missionaries[i])){
+						- if(namesAreEqual(transferBoard[j]['Missionary Name'], areas[group][zone][district][area].missionaries[i])){
 							- transferBoardRecord = transferBoard[j];
 						- }
 					- }
 					- if(i == 0){
-					div(class="col-xs-"+(12-(3*areas[zone][district][area].missionaries.length)))
+					div(class="col-xs-"+(12-(3*areas[group][zone][district][area].missionaries.length)))
 						ul
-							li=areas[zone][district][area].phone
+							li=areas[group][zone][district][area].phone
 							- if(transferBoardRecord['Area Address'] != ''){
 							li=transferBoardRecord['Area Address']	
 							- }
@@ -75,7 +76,7 @@ block content
 					div(class="col-xs-3")
 						- var pic = 0;
 						- for(id in roster){
-							- if(areas[zone][district][area].missionaries[i] == roster[id].name){
+							- if(areas[group][zone][district][area].missionaries[i] == roster[id].name){
 								- pic = id;
 							- }
 						- }
@@ -85,10 +86,11 @@ block content
 							- for(var j = 0; j < numDots; j++){
 							span(class="glyphicon glyphicon-one-fine-dot")
 							- }
-						strong=areas[zone][district][area].missionaries[i]
+						strong=areas[group][zone][district][area].missionaries[i]
 						p=roster[pic].position
 					-}
 		- }			
+		- }
 		- }
 		- }
 		- }

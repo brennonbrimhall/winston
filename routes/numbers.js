@@ -56,7 +56,7 @@ router.get('/numbers/tocall', function(req, res, next) {
 var dynamicRequire = require('../helpers/dynamicRequire.js');
 var datetime = require('../helpers/datetime.js');
 
-var areas = dynamicRequire.read('../areas/current.json');
+var areas = dynamicRequire.readAreas();
 
 var lastMonday = datetime.getLastMonday();
 
@@ -70,21 +70,23 @@ for(report in weeklyreports){
 //Now, going through the areas list and if they have NOT reported, we are going to put them
 //into a new object that has a modified areas list with only those who have not reported.
 var didNotReport = {};
-for(zone in areas){
-	for(district in areas[zone]){
-		for(area in areas[zone][district]){
-			if(phoneNumbers.indexOf(areas[zone][district][area].phone) == -1){
-				if(typeof didNotReport[zone] === 'undefined'){
-					didNotReport[zone] = {};
+for(group in areas){
+	for(zone in areas){
+		for(district in areas[group][zone]){
+			for(area in areas[group][zone][district]){
+				if(phoneNumbers.indexOf(areas[group][zone][district][area].phone) == -1){
+					if(typeof didNotReport[zone] === 'undefined'){
+						didNotReport[zone] = {};
+					}
+					if(typeof didNotReport[zone][district] === 'undefined'){
+						didNotReport[zone][district] = {};
+					}
+					if(typeof didNotReport[zone][district][area] === 'undefined'){
+						didNotReport[zone][district][area] = {};
+					}
+					didNotReport[zone][district][area] = areas[group][zone][district][area];
+					console.dir(didNotReport[zone][district][area]);
 				}
-				if(typeof didNotReport[zone][district] === 'undefined'){
-					didNotReport[zone][district] = {};
-				}
-				if(typeof didNotReport[zone][district][area] === 'undefined'){
-					didNotReport[zone][district][area] = {};
-				}
-				didNotReport[zone][district][area] = areas[zone][district][area];
-				console.dir(didNotReport[zone][district][area]);
 			}
 		}
 	}
@@ -162,10 +164,12 @@ if(typeof req.query.phone !== 'undefined'){
 
 	var areas = dynamicRequire.readAreas();
 	var phones = [];
-	for(zone in areas){
-		for(district in areas[zone]){
-			for(area in areas[zone][district]){
-				phones.push(areas[zone][district][area].phone);
+	for(group in areas){
+		for(zone in areas[group]){
+			for(district in areas[group][zone]){
+				for(area in areas[group][zone][district]){
+					phones.push(areas[group][zone][district][area].phone);
+				}
 			}
 		}
 	}
@@ -178,11 +182,13 @@ if(typeof req.query.phone !== 'undefined'){
 	var config = dynamicRequire.readWeeklyReportConfig();
 	var phones = [];
 
-	for(zone in areas){
-		for(district in areas[zone]){
-			for(area in areas[zone][district]){
-				phones.push({name: area, 
-					phone: areas[zone][district][area].phone});
+	for(group in areas){
+		for(zone in areas){
+			for(district in areas[group][zone]){
+				for(area in areas[group][zone][district]){
+					phones.push({name: area, 
+						phone: areas[group][zone][district][area].phone});
+				}
 			}
 		}
 	}
@@ -197,100 +203,102 @@ if(typeof req.query.phone !== 'undefined'){
 
 //Populate the areas with who is serving there
 router.get('/numbers/areas', function(req, res, next) {
-var dynamicRequire = require('../helpers/dynamicRequire.js');
-var areas = dynamicRequire.readAreas();
-res.render('areas', {title: 'Areas', areas: areas});	
+	var dynamicRequire = require('../helpers/dynamicRequire.js');
+	var areas = dynamicRequire.readAreas();
+	res.render('areas', {title: 'Areas', areas: areas});	
 });
 
 router.get('/areas/:area', function(req, res, next) {
-var dynamicRequire = require('../helpers/dynamicRequire.js');
-var areas = dynamicRequire.readAreas();
-var config = dynamicRequire.readWeeklyReportConfig();
-var data = [];
-var areaData = {};
+	var dynamicRequire = require('../helpers/dynamicRequire.js');
+	var areas = dynamicRequire.readAreas();
+	var config = dynamicRequire.readWeeklyReportConfig();
+	var data = [];
+	var areaData = {};
 
-//First, we need to get the phone number for this area, which we will
-//do by correcting the area name, (since there can be a slash, we 
-//compensate by putting in a dash) and retrieving it from the directory 
-//of areas.
-var areaName = req.params.area.replace('-', '/');
-var phoneNumber;
+	//First, we need to get the phone number for this area, which we will
+	//do by correcting the area name, (since there can be a slash, we 
+	//compensate by putting in a dash) and retrieving it from the directory 
+	//of areas.
+	var areaName = req.params.area.replace('-', '/');
+	var phoneNumber;
 
-for (zone in areas) {
-	for(district in areas[zone]){
-		for(area in areas[zone][district]){
-			if(area == areaName){
-				phoneNumber = areas[zone][district][area].phone;
-				areaData = areas[zone][district][area];
-			}
-		}
-	}
-}
-
-var datetime = require('../helpers/datetime.js');
-var week = datetime.getWeekOfTransfer();
-var lastMonday = datetime.getLastMonday();
-
-//If this is week 1, we need to get all of last transfer;
-//otherwise, just get this transfers'.
-var weeksBackToGet;
-if(week == 0){
-	weeksBackToGet = 6;
-}else{
-	weeksBackToGet = week;
-}
-
-//OK, now we want to open up the report for the last 6 transfers, if available.
-
-//Since this first transfer is special, do it manually.  Note how t = 0 in for loop
-//below
-data[0]=[];
-for(var i = 0; i < weeksBackToGet; i++){
-	//This one should exist...
-	var weeklyreport = dynamicRequire.readWeeklyReport(lastMonday);
-	data[0][i] = {};
-
-	//Only should be one report in there in a week...
-	weeklyreport.forEach(function(currentValue, index, array){
-		if(currentValue.phone == phoneNumber){
-			data[0][i] = currentValue.report;
-			//Get the date in there, $ won't ever be used as an indicator
-			data[0][i]['$'] = lastMonday.getFullYear().toString()+'-'+(lastMonday.getMonth()+1).toString()+'-'+lastMonday.getDate().toString();
-		}
-	});
-	//Clean up, now let's set the date to a week previous.
-	lastMonday.setTime(lastMonday.getTime() - (7 * 24 * 60 * 60 * 1000));
-}	
-
-//Now to get the other weeks.
-/*for(var t = 1; t < 6; t++){
-	for(var w = 0; w < 6; w++){
-		//Now, we could theoretically bump back before Winston has records.
-		try {
-			var weeklyreport = dynamicRequire.readWeeklyReport(lastMonday);
-			
-					//And each transfer has six weeks
-			if(typeof data[t] === 'undefined'){
-				data[t] = [];
-			}
-
-			data[t][w] = {};
-			//Only should be one report in there in a week...
-			weeklyreport.forEach(function(currentValue, index, array){
-				if(currentValue.phone == phoneNumber){
-					data[t][w] = parseInt(currentValue.report);
-					data[t][w]['$'] = lastMonday.getFullYear().toString()+'-'+(lastMonday.getMonth()+1).toString()+'-'+lastMonday.getDate().toString();
+	for(group in areas){
+		for (zone in areas[group]) {
+			for(district in areas[group][zone]){
+				for(area in areas[group][zone][district]){
+					if(area == areaName){
+						phoneNumber = areas[group][zone][district][area].phone;
+						areaData = areas[group][zone][district][area];
+					}
 				}
-			});
-			//Clean up, now let's set the date to a week previous.
-			lastMonday.setTime(lastMonday.getTime() - (7 * 24 * 60 * 60 * 1000));
-		}catch(e){
-			console.log(e);
+			}
 		}
 	}
-}*/
 
-res.render('area', {title: areaName, data: data, area: areaData, config: config});
+	var datetime = require('../helpers/datetime.js');
+	var week = datetime.getWeekOfTransfer();
+	var lastMonday = datetime.getLastMonday();
+
+	//If this is week 1, we need to get all of last transfer;
+	//otherwise, just get this transfers'.
+	var weeksBackToGet;
+	if(week == 0){
+		weeksBackToGet = 6;
+	}else{
+		weeksBackToGet = week;
+	}
+
+	//OK, now we want to open up the report for the last 6 transfers, if available.
+
+	//Since this first transfer is special, do it manually.  Note how t = 0 in for loop
+	//below
+	data[0]=[];
+	for(var i = 0; i < weeksBackToGet; i++){
+		//This one should exist...
+		var weeklyreport = dynamicRequire.readWeeklyReport(lastMonday);
+		data[0][i] = {};
+
+		//Only should be one report in there in a week...
+		weeklyreport.forEach(function(currentValue, index, array){
+			if(currentValue.phone == phoneNumber){
+				data[0][i] = currentValue.report;
+				//Get the date in there, $ won't ever be used as an indicator
+				data[0][i]['$'] = lastMonday.getFullYear().toString()+'-'+(lastMonday.getMonth()+1).toString()+'-'+lastMonday.getDate().toString();
+			}
+		});
+		//Clean up, now let's set the date to a week previous.
+		lastMonday.setTime(lastMonday.getTime() - (7 * 24 * 60 * 60 * 1000));
+	}	
+
+	//Now to get the other weeks.
+	/*for(var t = 1; t < 6; t++){
+		for(var w = 0; w < 6; w++){
+			//Now, we could theoretically bump back before Winston has records.
+			try {
+				var weeklyreport = dynamicRequire.readWeeklyReport(lastMonday);
+				
+						//And each transfer has six weeks
+				if(typeof data[t] === 'undefined'){
+					data[t] = [];
+				}
+
+				data[t][w] = {};
+				//Only should be one report in there in a week...
+				weeklyreport.forEach(function(currentValue, index, array){
+					if(currentValue.phone == phoneNumber){
+						data[t][w] = parseInt(currentValue.report);
+						data[t][w]['$'] = lastMonday.getFullYear().toString()+'-'+(lastMonday.getMonth()+1).toString()+'-'+lastMonday.getDate().toString();
+					}
+				});
+				//Clean up, now let's set the date to a week previous.
+				lastMonday.setTime(lastMonday.getTime() - (7 * 24 * 60 * 60 * 1000));
+			}catch(e){
+				console.log(e);
+			}
+		}
+	}*/
+
+	res.render('area', {title: areaName, data: data, area: areaData, config: config});
 
 });
 
@@ -301,13 +309,15 @@ router.get('/district/:district/war', function (req, res, next){
 
 	var districtData = {};
 
-	for(zone in areas){
-		for(district in areas[zone]){
+for(group in areas){
+	for(zone in areas[group]){
+		for(district in areas[group][zone]){
 			if(district == req.params.district){
-				districtData = areas[zone][district];
+				districtData = areas[group][zone][district];
 			}
 		}
 	}
+}
 
 	res.render('district-war', 
 		{title: req.params.district, 
@@ -331,12 +341,14 @@ router.get('/district/:district', function(req, res, next) {
 	var districtName = req.params.district;
 	var phoneNumbers =[];
 
-	for(zone in areas) {
-		for(district in areas[zone]){
-			if(district == districtName){
-				districtData = areas[zone][district];
-				for(area in areas[zone][district]){
-					phoneNumbers.push(areas[zone][district][area].phone);
+	for(group in areas){
+		for(zone in areas[group]) {
+			for(district in areas[group][zone]){
+				if(district == districtName){
+					districtData = areas[group][zone][district];
+					for(area in areas[group][zone][district]){
+						phoneNumbers.push(areas[group][zone][district][area].phone);
+					}
 				}
 			}
 		}
@@ -441,9 +453,11 @@ router.get('/zone/:zone/war', function (req, res, next){
 
 	var zoneData = {};
 
-	for(zone in areas){
-		if(zone == req.params.zone){
-			zoneData = areas[zone];
+	for(group in areas){
+		for(zone in areas[group]){
+			if(zone == req.params.zone){
+				zoneData = areas[group][zone];
+			}
 		}
 	}
 
@@ -470,12 +484,14 @@ router.get('/zone/:zone', function(req, res, next) {
 	var phoneNumbers = [];
 
 	var areas = require('../areas/current.json');
-	for (zone in areas) {
-		if(zone == zoneName){
-			zoneData = areas[zone];
-			for(district in areas[zone]){
-				for(area in areas[zone][district]){
-						phoneNumbers.push(areas[zone][district][area].phone);
+	for(group in areas){
+		for (zone in areas[group]) {
+			if(zone == zoneName){
+				zoneData = areas[group][zone][group];
+				for(district in areas[group][zone]){
+					for(area in areas[group][zone][district]){
+							phoneNumbers.push(areas[group][zone][district][area].phone);
+					}
 				}
 			}
 		}
@@ -622,9 +638,9 @@ router.get('/missiontotals', function(req, res, next) {
 			
 			//Search for zone based off of phone number
 			Object.keys(areas).forEach(function(zone, index) {
-				Object.keys(areas[zone]).forEach(function(district, index) {
-					Object.keys(areas[zone][district]).forEach(function(area, index) {
-						if(areas[zone][district][area].phone == phoneNumber){
+				Object.keys(areas[group][zone]).forEach(function(district, index) {
+					Object.keys(areas[group][zone][district]).forEach(function(area, index) {
+						if(areas[group][zone][district][area].phone == phoneNumber){
 							//Then this is the right zone!
 							reportingZone = zone;
 						}
