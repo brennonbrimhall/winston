@@ -4,30 +4,34 @@ block title
 	h1 To Call (Those who have not yet submitted their numbers)
 
 block content
-	- Object.keys(areas).forEach(function(zone, index) {
+	- for(group in areas){
+
+	- for(zone in areas[group]){
 	//Verify that this isn't the office
+	h2(class="captialize")=group.toLowerCase();
 	- if(zone != 'MISSION OFFICE'){
-	h2
+	h3
 		a(class="captialize header-link" href="/zone/"+zone)=zone.toLowerCase()
-	- Object.keys(areas[zone]).forEach(function(district, index) {
+	- Object.keys(areas[group][zone]).forEach(function(district, index) {
 	div(class="panel panel-default")
 		div(class="panel-heading")
 			a(href="/district/"+district.replace('/', '-') class="header-link captialize")=district.toLowerCase()
 		div(class="panel-content")
 		div(class="list-group")
-		- Object.keys(areas[zone][district]).forEach(function(area, index) {
+		- Object.keys(areas[group][zone][district]).forEach(function(area, index) {
 		- var missionaryNames;
-		- for (var i = 0; i < areas[zone][district][area].missionaries.length; i++){
+		- for (var i = 0; i < areas[group][zone][district][area].missionaries.length; i++){
 			- if(i == 0){
-				- missionaryNames = areas[zone][district][area].missionaries[i]
+				- missionaryNames = areas[group][zone][district][area].missionaries[i]
 			- }else{
-				- missionaryNames = missionaryNames+'; '+areas[zone][district][area].missionaries[i]
+				- missionaryNames = missionaryNames+'; '+areas[group][zone][district][area].missionaries[i]
 			- }
 		- }
 
-			a(href="/areas/"+area.replace('/', '-') class="list-group-item captialize")=area.toLowerCase()+' ('+areas[zone][district][area].phone+'; '+ missionaryNames+')'
+			a(href="/areas/"+area.replace('/', '-') class="list-group-item captialize")=area.toLowerCase()+' ('+areas[group][zone][district][area].phone+'; '+ missionaryNames+')'
 		
 		- });
 	- });
 	- }
-	- });
+	- }
+	- }

@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var xlsx = require('xlsx');
 
 router.get('/import', function(req, res, next) {
 	var dynamicRequire = require('../helpers/dynamicRequire.js');
@@ -107,7 +108,17 @@ router.post('/import/roster', function(req, res, next){
 				}
 
 				roster[data[i]['Missionary ID']].phone = data[i]['Phone'];
-				roster[data[i]['Missionary ID']].zone = data[i]['Zone'];
+
+				//Get zone and mission group from the zone name
+				var rawZoneName = data[i]['Zone'];
+				var startIndex = rawZoneName.indexOf(' (');
+				var endIndex = rawZoneName.indexOf(')');
+
+				var zoneName = rawZoneName.substring(0, startIndex);
+				var missionGroup = rawZoneName.substring((startIndex+2), endIndex);
+
+				roster[data[i]['Missionary ID']].zone = zoneName;
+				roster[data[i]['Missionary ID']].group = missionGroup;
 				roster[data[i]['Missionary ID']].district = data[i]['District'];
 				roster[data[i]['Missionary ID']].area = data[i]['Area'];
 				//roster[data[i]['Missionary ID']].releaseDate = data[i]['Release Date'];  This is garbage!
@@ -118,32 +129,37 @@ router.post('/import/roster', function(req, res, next){
 
 				//Checking to see if stuff has already been initalized, if not, initalizing.
 
+				//Mission Group
+				if(typeof areas[missionGroup] === 'undefined'){
+					areas[missionGroup] = {};
+				}
+
 				//Zones
-				if(typeof areas[data[i]['Zone']] === 'undefined'){
-					areas[data[i]['Zone']] = {};
+				if(typeof areas[missionGroup][zoneName] === 'undefined'){
+					areas[missionGroup][zoneName] = {};
 				}
 
 				//Districts
-				if(typeof areas[data[i]['Zone']][data[i]['District']] === 'undefined'){
-					areas[data[i]['Zone']][data[i]['District']] = {};
+				if(typeof areas[missionGroup][zoneName][data[i]['District']] === 'undefined'){
+					areas[missionGroup][zoneName][data[i]['District']] = {};
 				}
 
 				//Areas
-				if(typeof areas[data[i]['Zone']][data[i]['District']][data[i]['Area']] === 'undefined'){
-					areas[data[i]['Zone']][data[i]['District']][data[i]['Area']] = {};
+				if(typeof areas[missionGroup][zoneName][data[i]['District']][data[i]['Area']] === 'undefined'){
+					areas[missionGroup][zoneName][data[i]['District']][data[i]['Area']] = {};
 				}
 
 				//Phone Number
-				if(typeof areas[data[i]['Zone']][data[i]['District']][data[i]['Area']]['phone'] === 'undefined'){
-					areas[data[i]['Zone']][data[i]['District']][data[i]['Area']]['phone'] = data[i]['Phone'];
+				if(typeof areas[missionGroup][zoneName][data[i]['District']][data[i]['Area']]['phone'] === 'undefined'){
+					areas[missionGroup][zoneName][data[i]['District']][data[i]['Area']]['phone'] = data[i]['Phone'];
 				}
 
 				//Seeing if array for missionaries has been initialized
-				if(typeof areas[data[i]['Zone']][data[i]['District']][data[i]['Area']]['missionaries'] === 'undefined'){
-					areas[data[i]['Zone']][data[i]['District']][data[i]['Area']]['missionaries'] = [];
+				if(typeof areas[missionGroup][zoneName][data[i]['District']][data[i]['Area']]['missionaries'] === 'undefined'){
+					areas[missionGroup][zoneName][data[i]['District']][data[i]['Area']]['missionaries'] = [];
 				}
 
-				areas[data[i]['Zone']][data[i]['District']][data[i]['Area']]['missionaries'].push(data[i]['Name']);
+				areas[missionGroup][zoneName][data[i]['District']][data[i]['Area']]['missionaries'].push(data[i]['Name']);
 			}
 		}
 

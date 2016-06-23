@@ -7,10 +7,118 @@ block scripts
 	script(src="/javascripts/print-page.js")
 
 block content
-	- for(zone in areas){
+	div(class="print-together")
+		h2(class="captialize print-break") Mission Totals
+		table(class="table table-hover table-bordered")
+			thead
+				tr
+					th Statistic
+					- for(var i = 0; i < config.length; i++){
+					th=config[i].name
+					- }
+			tbody
+				tr
+					th Total
+					- for(var i = 0; i < config.length; i++){
+					- if(typeof areas.report !== 'undefined'){
+					td=areas.report[config[i].shortname]
+					- }else{
+					td --
+					- }
+					- }
+				tr
+					th Mission Group Average
+					- for(var i = 0; i < config.length; i++){
+					- if(typeof areas.report !== 'undefined'){
+					//td=(Math.round(areas[group][zone].report[config[i].shortname]/(Object.keys(areas[group][zone])-1).length*100))
+					td=(areas.report[config[i].shortname]/(Object.keys(areas).length-1)).toFixed(2)
+					- }else{
+					td --
+					- }
+					- }
+				tr
+					th Companionship Average
+					//Get the number of companionships
+					- var numberOfCompanionships = 0;
+					- for(group in areas){
+						- if(group !== "report"){
+							- for(zone in areas[group]){
+								- if(zone !== "report"){
+									- for(district in areas[group][zone]){
+										- if(district !== "report"){
+											- numberOfCompanionships += (Object.keys(areas[group][zone][district]).length-1)
+										-}
+									- }
+								- }
+							- }
+						- }
+					- }
+					- for(var i = 0; i < config.length; i++){
+					- if(typeof areas.report !== 'undefined'){
+					td=(areas.report[config[i].shortname]/numberOfCompanionships).toFixed(2)
+					- }else{
+					td --
+					- }
+					- }
+		- for(group in areas){
+		- if(group !== 'report'){
+		h3(class="captialize")=group.toLowerCase()
+		table(class="table table-hover table-bordered")
+			thead
+				tr
+					th Statistic
+					- for(var i = 0; i < config.length; i++){
+					th=config[i].name
+					- }
+			tbody
+				tr
+					th Total
+					- for(var i = 0; i < config.length; i++){
+					- if(typeof areas[group].report !== 'undefined'){
+					td=areas[group].report[config[i].shortname]
+					- }else{
+					td --
+					- }
+					- }
+				tr
+					th Zone Average
+					- for(var i = 0; i < config.length; i++){
+					- if(typeof areas[group].report !== 'undefined'){
+					//td=(Math.round(areas[group][zone].report[config[i].shortname]/(Object.keys(areas[group][zone])-1).length*100))
+					td=(areas[group].report[config[i].shortname]/(Object.keys(areas[group]).length-1)).toFixed(2)
+					- }else{
+					td --
+					- }
+					- }
+				tr
+					th Companionship Average
+					//Get the number of companionships
+					- var numberOfCompanionships = 0;
+					- for(zone in areas[group]){
+						- if(zone !== "report"){
+							- for(district in areas[group][zone]){
+								- if(district !== "report"){
+									- numberOfCompanionships += (Object.keys(areas[group][zone][district]).length-1)
+								-}
+							- }
+						- }
+					- }
+					- for(var i = 0; i < config.length; i++){
+					- if(typeof areas[group].report !== 'undefined'){
+					td=(areas[group].report[config[i].shortname]/numberOfCompanionships).toFixed(2)
+					- }else{
+					td --
+					- }
+					- }
+		- }
+		- }
+
+	- for(group in areas){
+	- if(group !=="report"){
+	- for(zone in areas[group]){
 	- if (zone != "MISSION OFFICE" && zone != 'report' && (reportForZone === '' || zone === reportForZone)){
 	h2(class="captialize print-break")=zone.toLowerCase()+" Zone ("+lastMonday.getFullYear().toString()+"-"+(lastMonday.getMonth()+1).toString()+"-"+lastMonday.getDate().toString()+")"
-	- for(district in areas[zone]){
+	- for(district in areas[group][zone]){
 	- if(district != "report"){
 	div(class="print-together")
 		h3(class="captialize")=district.toLowerCase()
@@ -22,15 +130,15 @@ block content
 					th=config[i].name
 					- }
 			tbody
-			- for(area in areas[zone][district]){
+			- for(area in areas[group][zone][district]){
 			- if(area != "report"){
 				tr
 					td(class="captialize")=area.toLowerCase()
 					- for(var i = 0; i < config.length; i++){
-					- if(typeof areas[zone][district][area].report === 'undefined'){
+					- if(typeof areas[group][zone][district][area].report === 'undefined'){
 					td="--"
 					- }else{
-					td=areas[zone][district][area].report[config[i].shortname]
+					td=areas[group][zone][district][area].report[config[i].shortname]
 					- }
 					- }
 			- }
@@ -38,8 +146,8 @@ block content
 				tr
 					th District Total (Average)
 					- for(var i = 0; i < config.length; i++){
-					- if(typeof areas[zone][district].report !== 'undefined'){
-					th=areas[zone][district].report[config[i].shortname]+" ("+(areas[zone][district].report[config[i].shortname]/(Object.keys(areas[zone][district]).length-1)).toFixed(2)+")"
+					- if(typeof areas[group][zone][district].report !== 'undefined'){
+					th=areas[group][zone][district].report[config[i].shortname]+" ("+(areas[group][zone][district].report[config[i].shortname]/(Object.keys(areas[group][zone][district]).length-1)).toFixed(2)+")"
 					- }else{
 					th --
 					- }
@@ -59,8 +167,8 @@ block content
 				tr
 					th Total
 					- for(var i = 0; i < config.length; i++){
-					- if(typeof areas[zone].report !== 'undefined'){
-					td=areas[zone].report[config[i].shortname]
+					- if(typeof areas[group][zone].report !== 'undefined'){
+					td=areas[group][zone].report[config[i].shortname]
 					- }else{
 					td --
 					- }
@@ -68,9 +176,9 @@ block content
 				tr
 					th District Average
 					- for(var i = 0; i < config.length; i++){
-					- if(typeof areas[zone].report !== 'undefined'){
-					//td=(Math.round(areas[zone].report[config[i].shortname]/(Object.keys(areas[zone])-1).length*100))
-					td=(areas[zone].report[config[i].shortname]/(Object.keys(areas[zone]).length-1)).toFixed(2)
+					- if(typeof areas[group][zone].report !== 'undefined'){
+					//td=(Math.round(areas[group][zone].report[config[i].shortname]/(Object.keys(areas[group][zone])-1).length*100))
+					td=(areas[group][zone].report[config[i].shortname]/(Object.keys(areas[group][zone]).length-1)).toFixed(2)
 					- }else{
 					td --
 					- }
@@ -79,19 +187,21 @@ block content
 					th Companionship Average
 					//Get the number of companionships
 					- var numberOfCompanionships = 0;
-					- for(district in areas[zone]){
+					- for(district in areas[group][zone]){
 						- if(district !== "report"){
-							- numberOfCompanionships += (Object.keys(areas[zone][district]).length-1)
+							- numberOfCompanionships += (Object.keys(areas[group][zone][district]).length-1)
 						- }
 					- }
 					- for(var i = 0; i < config.length; i++){
-					- if(typeof areas[zone].report !== 'undefined'){
+					- if(typeof areas[group][zone].report !== 'undefined'){
 					
-					td=(areas[zone].report[config[i].shortname]/numberOfCompanionships).toFixed(2)
+					td=(areas[group][zone].report[config[i].shortname]/numberOfCompanionships).toFixed(2)
 					- }else{
 					td --
 					- }
 					- }
+	- }
+	- }
 	- }
 	- }
 	

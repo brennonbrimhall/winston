@@ -36,36 +36,38 @@ router.get('/miles', function(req, res, next){
 	
 	var i = 0;
 	
-	for(zone in areas){
-		if(zone != "MISSION OFFICE"){
-			for (district in areas[zone]){
-				for (area in areas[zone][district]){
-					data[i] = {};
-					data[i].area = areas[zone][district][area];
-					data[i].zoneName = zone;
-					data[i].districtName = district;
-					data[i].areaName = area;
-					data[i].endingOdometer = 0;
-					data[i].estimated = 0;
+	for(group in areas){
+		for(zone in areas){
+			if(zone != "MISSION OFFICE"){
+				for (district in areas[group][zone]){
+					for (area in areas[group][zone][district]){
+						data[i] = {};
+						data[i].area = areas[group][zone][district][area];
+						data[i].zoneName = zone;
+						data[i].districtName = district;
+						data[i].areaName = area;
+						data[i].endingOdometer = 0;
+						data[i].estimated = 0;
 
-					//Getting ending miles from report
-					for(var j = 0; j < weeklyReport.length; j++){
-						if(areas[zone][district][area].phone == weeklyReport[j].phone){
-							data[i].endingOdometer = weeklyReport[j].report.miles;
+						//Getting ending miles from report
+						for(var j = 0; j < weeklyReport.length; j++){
+							if(areas[group][zone][district][area].phone == weeklyReport[j].phone){
+								data[i].endingOdometer = weeklyReport[j].report.miles;
+							}
 						}
-					}
 
-					//Getting ending miles from previous report to caculate weekly usage,
-					//then using that to estimate the monthly ending odometer.
-					var weeksToInterpolate = (d.getDate() - lastMonday.getDate())/7;
+						//Getting ending miles from previous report to caculate weekly usage,
+						//then using that to estimate the monthly ending odometer.
+						var weeksToInterpolate = (d.getDate() - lastMonday.getDate())/7;
 
-					for(var j = 0; j < previousWeeklyReport.length; j++){
-						if(areas[zone][district][area].phone == previousWeeklyReport[j].phone){
-							data[i].estimated = data[i].endingOdometer + weeksToInterpolate*(data[i].endingOdometer - previousWeeklyReport[j].report.miles);
+						for(var j = 0; j < previousWeeklyReport.length; j++){
+							if(areas[group][zone][district][area].phone == previousWeeklyReport[j].phone){
+								data[i].estimated = data[i].endingOdometer + weeksToInterpolate*(data[i].endingOdometer - previousWeeklyReport[j].report.miles);
+							}
 						}
-					}
 
-					i++;
+						i++;
+					}
 				}
 			}
 		}
@@ -78,6 +80,7 @@ router.get('/miles', function(req, res, next){
 
 router.get('/sendtext', function(req, res, next){
 	var dynamicRequire = require('../helpers/dynamicRequire.js');
+	var imos = require('../helpers/imos.js');
 
 	//If a message is not defined, that means that we did not request
 	//a text.
@@ -96,20 +99,19 @@ router.get('/sendtext', function(req, res, next){
 		
 		//Let's make an array of all the phones, plus @txt.att.net
 		var phones = [];
-		var areas = dynamicRequire.read('../areas/current.json');
-		Object.keys(areas).forEach(function(zone, index){
-			//Cutting out mission office
-			if(zone != 'MISSION OFFICE'){
-				Object.keys(areas[zone]).forEach(function(district, index){
-					Object.keys(areas[zone][district]).forEach(function(area, index){
-						//For testing, only send to Orchard
-						if(area == 'LAKEWOOD/Office'){
-							phones.push(areas[zone][district][area].phone);
+		var areas = dynamicRequire.readAreas();
+		for(group in areas){
+			for(zone in areas[group]){
+				//Cutting out mission office
+				if(zone != 'MISSION OFFICE'){
+					for(district in areas[group][zone]){
+						for(area in areas[group][zone][district]){
+							phones.push(imos.phoneNumberToEmail(areas[group][zone][district][area].phone));
 						}
-					});
-				});
+					}
+				}
 			}
-		});
+		}
 
 		//Now, initiating emails.
 		var mailer = require('../helpers/mailer.js');

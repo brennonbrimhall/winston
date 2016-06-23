@@ -4,7 +4,7 @@ var router = express.Router();
 router.get('/reports/stl/war', function(req, res, next) {
 	var dynamicRequire = require('../helpers/dynamicRequire.js');
 
-	var config = dynamicRequire.read('../weeklyreports/config.json');
+	var config = dynamicRequire.readWeeklyReportConfig();
 	res.render('stl-war', { title: 'Winston', config: config});
 });
 
@@ -25,79 +25,96 @@ router.get('/reports/weekly/war', function(req, res, next) {
 	}
 
 	//Now, add the reports to the area object!
-	for(zone in areas){
-		if(zone !== 'MISSION OFFICE'){
-			for(district in areas[zone]){
-				for(area in areas[zone][district]){
-					//Find report by phone number
-					for(var i = 0; i < reports.length; i++){
-						if(areas[zone][district][area].phone == reports[i].phone){
-							//Get total lessons
-							var totalLessons = 0;
-							for(var j = 0; j < config.length; j++){
-								if(config[j].totallessons){
-									totalLessons += parseInt(reports[i].report[config[j].shortname]);
-								}
-							}
-
-							//Sneak total lessons in...
-							config.push({name: "Total Lessons", shortname: "tl", totallessons: false});
-
-							areas[zone][district][area].report = {};
-							areas[zone][district][area].report = reports[i].report;
-
-							//Sneak total lessons in
-							areas[zone][district][area].report.tl = totalLessons;
-
-							//Now, add totals to mission, zone, and district
-							if(typeof areas.report === 'undefined'){
-								areas.report = {};
+	for(group in areas){
+		for(zone in areas[group]){
+			if(zone !== 'MISSION OFFICE'){
+				for(district in areas[group][zone]){
+					for(area in areas[group][zone][district]){
+						//Find report by phone number
+						for(var i = 0; i < reports.length; i++){
+							if(areas[group][zone][district][area].phone == reports[i].phone){
+								//Get total lessons
+								var totalLessons = 0;
 								for(var j = 0; j < config.length; j++){
-									areas.report[config[j].shortname] = 0;
+									if(config[j].totallessons){
+										totalLessons += parseInt(reports[i].report[config[j].shortname]);
+									}
 								}
-							}
 
-							for(var j = 0; j < config.length; j++){
-								var value = areas[zone][district][area].report[config[j].shortname];
-								if(typeof value === 'undefined'){
-									value = 0;
+								//Sneak total lessons in...
+								config.push({name: "Total Lessons", shortname: "tl", totallessons: false});
+
+								areas[group][zone][district][area].report = {};
+								areas[group][zone][district][area].report = reports[i].report;
+
+								//Sneak total lessons in
+								areas[group][zone][district][area].report.tl = totalLessons;
+
+								//Now, add totals to mission, group, zone, and district
+								if(typeof areas.report === 'undefined'){
+									areas.report = {};
+									for(var j = 0; j < config.length; j++){
+										areas.report[config[j].shortname] = 0;
+									}
 								}
-								areas.report[config[j].shortname] += parseInt(value);
-							}
 
-							if(typeof areas[zone].report === 'undefined'){
-								areas[zone].report = {};
 								for(var j = 0; j < config.length; j++){
-									areas[zone].report[config[j].shortname] = 0;
+									var value = areas[group][zone][district][area].report[config[j].shortname];
+									if(typeof value === 'undefined'){
+										value = 0;
+									}
+									areas.report[config[j].shortname] += parseInt(value);
 								}
-							}
 
-							for(var j = 0; j < config.length; j++){
-								var value = areas[zone][district][area].report[config[j].shortname];
-								if(typeof value === 'undefined'){
-									value = 0;
+								if(typeof areas[group].report === 'undefined'){
+									areas[group].report = {};
+									for(var j = 0; j < config.length; j++){
+										areas[group].report[config[j].shortname] = 0;
+									}
 								}
-								areas[zone].report[config[j].shortname] += parseInt(value);
-							}
 
-							if(typeof areas[zone][district].report === 'undefined'){
-								areas[zone][district].report = {};
 								for(var j = 0; j < config.length; j++){
-									areas[zone][district].report[config[j].shortname] = 0;
+									var value = areas[group][zone][district][area].report[config[j].shortname];
+									if(typeof value === 'undefined'){
+										value = 0;
+									}
+									areas[group].report[config[j].shortname] += parseInt(value);
 								}
-							}
 
-							for(var j = 0; j < config.length; j++){
-								var value = areas[zone][district][area].report[config[j].shortname];
-								if(typeof value === 'undefined'){
-									value = 0;
+								if(typeof areas[group][zone].report === 'undefined'){
+									areas[group][zone].report = {};
+									for(var j = 0; j < config.length; j++){
+										areas[group][zone].report[config[j].shortname] = 0;
+									}
 								}
-								areas[zone][district].report[config[j].shortname] += parseInt(value);
+
+								for(var j = 0; j < config.length; j++){
+									var value = areas[group][zone][district][area].report[config[j].shortname];
+									if(typeof value === 'undefined'){
+										value = 0;
+									}
+									areas[group][zone].report[config[j].shortname] += parseInt(value);
+								}
+
+								if(typeof areas[group][zone][district].report === 'undefined'){
+									areas[group][zone][district].report = {};
+									for(var j = 0; j < config.length; j++){
+										areas[group][zone][district].report[config[j].shortname] = 0;
+									}
+								}
+
+								for(var j = 0; j < config.length; j++){
+									var value = areas[group][zone][district][area].report[config[j].shortname];
+									if(typeof value === 'undefined'){
+										value = 0;
+									}
+									areas[group][zone][district].report[config[j].shortname] += parseInt(value);
+								}
+
+								//Sneak total lessons out...
+								config.pop();
+
 							}
-
-							//Sneak total lessons out...
-							config.pop();
-
 						}
 					}
 				}
@@ -105,7 +122,7 @@ router.get('/reports/weekly/war', function(req, res, next) {
 		}
 	}
 	
-	console.log(reportForZone);
+	console.dir(areas);
 
 	//Sneak total lessons in again...
 	config.push({name: "Total Lessons", shortname: "tl", totallessons: false});
