@@ -152,7 +152,7 @@ router.get('/reports/smr', function(req, res, next) {
 	}
 
 	//console.dir(transferPlanning);
-
+	console.log(reportForZone);
 	res.render('smr', {title: 'Mission Directory', areas: areas, roster: roster, transferPlanning: transferPlanning, transferBoard: transferBoard, reportForZone: reportForZone, reportsUpdated: reportsUpdated});
 });
 
