@@ -7,8 +7,23 @@ var fs = require('fs');
 router.get('/', function(req, res, next) {
 	var dynamicRequire = require('../helpers/dynamicRequire.js');
 
+	var os = require('os');
+
+	var interfaces = os.networkInterfaces();
+	var addresses = [];
+	for (var k in interfaces) {
+		for (var k2 in interfaces[k]) {
+			var address = interfaces[k][k2];
+			if (address.family === 'IPv4' && !address.internal) {
+				addresses.push(address.address);
+			}
+		}
+	}
+
+	console.dir(addresses);
+
 	var format = dynamicRequire.read('../weeklyreports/config.json');
-	res.render('index', { title: 'Winston', format: format});
+	res.render('index', { title: 'Winston', format: format, addresses: addresses});
 });
 
 router.get('/miles', function(req, res, next){
