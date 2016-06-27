@@ -5,10 +5,9 @@ block title
 
 block content
 	- for(group in areas){
-
+	h2(class="captialize")=group.toLowerCase()
 	- for(zone in areas[group]){
 	//Verify that this isn't the office
-	h2(class="captialize")=group.toLowerCase();
 	- if(zone != 'MISSION OFFICE'){
 	h3
 		a(class="captialize header-link" href="/zone/"+zone)=zone.toLowerCase()

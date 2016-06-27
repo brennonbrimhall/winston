@@ -24,12 +24,26 @@ router.get('/reports/weekly/war', function(req, res, next) {
 		reportForZone = req.query.zone;
 	}
 
+	//Take out any senior couples
+	for(group in areas){
+		for(zone in areas[group]){
+			for(district in areas[group][zone]){
+				for(area in areas[group][zone][district]){
+					if(area.toLowerCase().includes('senior')){
+						delete areas[group][zone][district][area];
+					}
+				}
+			}
+		}
+	}
+
 	//Now, add the reports to the area object!
 	for(group in areas){
 		for(zone in areas[group]){
 			if(zone !== 'MISSION OFFICE'){
 				for(district in areas[group][zone]){
 					for(area in areas[group][zone][district]){
+						//Make sure we don't deal with senior couples
 						//Find report by phone number
 						for(var i = 0; i < reports.length; i++){
 							if(areas[group][zone][district][area].phone == reports[i].phone){

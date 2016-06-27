@@ -67,30 +67,39 @@ for(report in weeklyreports){
 	phoneNumbers.push(weeklyreports[report].phone);
 }
 
+console.dir(phoneNumbers);
+
 //Now, going through the areas list and if they have NOT reported, we are going to put them
 //into a new object that has a modified areas list with only those who have not reported.
 var didNotReport = {};
 for(group in areas){
-	for(zone in areas){
+	for(zone in areas[group]){
 		for(district in areas[group][zone]){
 			for(area in areas[group][zone][district]){
 				if(phoneNumbers.indexOf(areas[group][zone][district][area].phone) == -1){
-					if(typeof didNotReport[zone] === 'undefined'){
-						didNotReport[zone] = {};
+					if(typeof didNotReport[group] === 'undefined'){
+						didNotReport[group] = {};
 					}
-					if(typeof didNotReport[zone][district] === 'undefined'){
-						didNotReport[zone][district] = {};
+					if(typeof didNotReport[group][zone] === 'undefined'){
+						didNotReport[group][zone] = {};
 					}
-					if(typeof didNotReport[zone][district][area] === 'undefined'){
-						didNotReport[zone][district][area] = {};
+					if(typeof didNotReport[group][zone][district] === 'undefined'){
+						didNotReport[group][zone][district] = {};
 					}
-					didNotReport[zone][district][area] = areas[group][zone][district][area];
-					console.dir(didNotReport[zone][district][area]);
+					if(typeof didNotReport[group][zone][district][area] === 'undefined'){
+						didNotReport[group][zone][district][area] = {};
+					}
+					didNotReport[group][zone][district][area] = areas[group][zone][district][area];
+					console.dir(didNotReport[group][zone][district][area]);
+				}else{
+					console.log('Reported')
 				}
 			}
 		}
 	}
 }
+
+console.log(didNotReport);
 
 res.render('tocall', {
 	title: 'To Call',
@@ -100,112 +109,112 @@ res.render('tocall', {
 });
 
 router.get('/numbers/reports', function(req, res, next) {
-var dynamicRequire = require('../helpers/dynamicRequire.js');
+	var dynamicRequire = require('../helpers/dynamicRequire.js');
 
-if(typeof req.query.phone !== 'undefined'){
-	//Save this data that we got!
-	var config = dynamicRequire.readWeeklyReportConfig();
-	var report = {};
+	if(typeof req.query.phone !== 'undefined'){
+		//Save this data that we got!
+		var config = dynamicRequire.readWeeklyReportConfig();
+		var report = {};
 
-	//get phone, date, and miles
-	var phoneNumber = req.query.phone;
+		//get phone, date, and miles
+		var phoneNumber = req.query.phone;
 
-	var date = new Date(req.query['$']);
+		var date = new Date(req.query['$']);
 
-	//For whatever reason, we get the day before the one we should.
-	//Therefore, increment the day by one.
-	date.setDate(date.getDate() + 1);
+		//For whatever reason, we get the day before the one we should.
+		//Therefore, increment the day by one.
+		date.setDate(date.getDate() + 1);
 
-	var miles = req.query.miles;
+		var miles = req.query.miles;
 
-	//now get everything else
-	for(indicator in config){
-		report[config[indicator].shortname] = req.query[config[indicator].shortname];
-	}
-
-	report.miles = miles;
-
-	//Do we have a file for this reporting day?
-	try{
-		//Get the file that holds all of this week's numbers reports
-		var numbers = dynamicRequire.readWeeklyReport(date);
-	}catch(err){
-		//Init empty array.  We will create this file.
-		//console.log('Numbers file doesn\'t exist');
-		var numbers = [];
-	}
-
-	//Adding it to the numbers reports
-
-	//Do we have a record already from them today?  If so, we need to overwrite it.
-	var needToOverwrite = false;
-	var overwriteIndex;
-	numbers.forEach(function(currentValue, index, array){
-		if(currentValue.phone == phoneNumber){
-			needToOverwrite = true;
-			overwriteIndex = index;
+		//now get everything else
+		for(indicator in config){
+			report[config[indicator].shortname] = req.query[config[indicator].shortname];
 		}
-	});
 
-	if(needToOverwrite){
-		console.log('Overwriting.');
-		numbers[overwriteIndex] = {recieved: Date.now(), phone: phoneNumber, report: report};
-	}else{
-		console.log('No need to overwrite, appending.');
-		numbers.push({recieved: Date.now(), phone: phoneNumber, report: report});
-	}
+		report.miles = miles;
 
-	console.log('Saving numbers...');
+		//Do we have a file for this reporting day?
+		try{
+			//Get the file that holds all of this week's numbers reports
+			var numbers = dynamicRequire.readWeeklyReport(date);
+		}catch(err){
+			//Init empty array.  We will create this file.
+			//console.log('Numbers file doesn\'t exist');
+			var numbers = [];
+		}
 
-	dynamicRequire.writeWeeklyReport(date, numbers);
+		//Adding it to the numbers reports
 
-	//var fs = require('fs');
-	//fs.writeFile('./weeklyreports/'+date.getUTCDate().toString()+'-'+(date.getMonth()+1).toString()+'-'+date.getFullYear().toString()+'.json', JSON.stringify(numbers), function(){
+		//Do we have a record already from them today?  If so, we need to overwrite it.
+		var needToOverwrite = false;
+		var overwriteIndex;
+		numbers.forEach(function(currentValue, index, array){
+			if(currentValue.phone == phoneNumber){
+				needToOverwrite = true;
+				overwriteIndex = index;
+			}
+		});
 
-	var areas = dynamicRequire.readAreas();
-	var phones = [];
-	for(group in areas){
-		for(zone in areas[group]){
-			for(district in areas[group][zone]){
-				for(area in areas[group][zone][district]){
-					phones.push(areas[group][zone][district][area].phone);
+		if(needToOverwrite){
+			console.log('Overwriting.');
+			numbers[overwriteIndex] = {recieved: Date.now(), phone: phoneNumber, report: report};
+		}else{
+			console.log('No need to overwrite, appending.');
+			numbers.push({recieved: Date.now(), phone: phoneNumber, report: report});
+		}
+
+		console.log('Saving numbers...');
+
+		dynamicRequire.writeWeeklyReport(date, numbers);
+
+		//var fs = require('fs');
+		//fs.writeFile('./weeklyreports/'+date.getUTCDate().toString()+'-'+(date.getMonth()+1).toString()+'-'+date.getFullYear().toString()+'.json', JSON.stringify(numbers), function(){
+
+		var areas = dynamicRequire.readAreas();
+		var phones = [];
+		for(group in areas){
+			for(zone in areas[group]){
+				for(district in areas[group][zone]){
+					for(area in areas[group][zone][district]){
+						phones.push(areas[group][zone][district][area].phone);
+					}
 				}
 			}
 		}
-	}
 
-	res.redirect('/reports?success=true');
+		res.redirect('/numbers/reports?success=true');
 
-}else{
-	//No records to save
-	var areas = dynamicRequire.readAreas();
-	var config = dynamicRequire.readWeeklyReportConfig();
-	var phones = [];
+	}else{
+		//No records to save
+		var areas = dynamicRequire.readAreas();
+		var config = dynamicRequire.readWeeklyReportConfig();
+		var phones = [];
 
-	for(group in areas){
-		for(zone in areas){
-			for(district in areas[group][zone]){
-				for(area in areas[group][zone][district]){
-					phones.push({name: area, 
-						phone: areas[group][zone][district][area].phone});
+		for(group in areas){
+			for(zone in areas){
+				for(district in areas[group][zone]){
+					for(area in areas[group][zone][district]){
+						phones.push({name: area, 
+							phone: areas[group][zone][district][area].phone});
+					}
 				}
 			}
 		}
-	}
 
-	if(req.query.success == 'true'){
-		res.render('reports', {phones: phones, config: config, alert: {type: 'success', title: 'Update successful!', body: 'Your numbers report was saved.'}});
-	}else{
-		res.render('reports', {phones: phones, config: config});
-	}
-}	
+		if(req.query.success == 'true'){
+			res.render('reports', {phones: phones, config: config, alert: {type: 'success', title: 'Update successful!', body: 'Your numbers report was saved.'}});
+		}else{
+			res.render('reports', {phones: phones, config: config});
+		}
+	}	
 });
 
 //Populate the areas with who is serving there
 router.get('/numbers/areas', function(req, res, next) {
 	var dynamicRequire = require('../helpers/dynamicRequire.js');
 	var areas = dynamicRequire.readAreas();
-	res.render('areas', {title: 'Areas', areas: areas});	
+	res.render('areas', {title: 'Areas', areas: areas});
 });
 
 router.get('/areas/:area', function(req, res, next) {
@@ -635,15 +644,19 @@ router.get('/missiontotals', function(req, res, next) {
 			//What zone is this in?
 			var phoneNumber = currentValue.phone;
 			var reportingZone;
+			var reportingGroup;
 			
 			//Search for zone based off of phone number
-			Object.keys(areas).forEach(function(zone, index) {
-				Object.keys(areas[group][zone]).forEach(function(district, index) {
-					Object.keys(areas[group][zone][district]).forEach(function(area, index) {
-						if(areas[group][zone][district][area].phone == phoneNumber){
-							//Then this is the right zone!
-							reportingZone = zone;
-						}
+			Object.keys(areas).forEach(function(group, index) {
+				Object.keys(areas[group]).forEach(function(zone, index) {
+					Object.keys(areas[group][zone]).forEach(function(district, index) {
+						Object.keys(areas[group][zone][district]).forEach(function(area, index) {
+							if(areas[group][zone][district][area].phone == phoneNumber){
+								//Then this is the right zone!
+								reportingZone = zone;
+								reportingGroup = group;
+							}
+						});
 					});
 				});
 			});
@@ -663,22 +676,27 @@ router.get('/missiontotals', function(req, res, next) {
 			//object, iterating through all the indicators.
 			for(var j = 0; j < config.length; j++){
 				
-				//Initializing the week/zone if it needs to be
-				if(typeof report[reportingZone] === 'undefined'){
+				if(typeof report[reportingGroup] === 'undefined'){
 					//console.log('report['+reportingZone+'] is undefined');
-					report[reportingZone] = [];
+					report[reportingGroup] = [];
 				}
-				if(typeof report[reportingZone][i] === 'undefined'){
+
+				//Initializing the week/zone if it needs to be
+				if(typeof report[reportingGroup][reportingZone] === 'undefined'){
+					//console.log('report['+reportingZone+'] is undefined');
+					report[reportingGroup][reportingZone] = [];
+				}
+				if(typeof report[reportingGroup][reportingZone][i] === 'undefined'){
 					//console.log('report['+reportingZone+']['+i+'] is undefined');
-					report[reportingZone][i] = {};
+					report[reportingGroup][reportingZone][i] = {};
 				}
-				if(typeof report[reportingZone][i][config[j]['shortname']] === 'undefined'){
+				if(typeof report[reportingGroup][reportingZone][i][config[j]['shortname']] === 'undefined'){
 					//console.log('report['+reportingZone+']['+i+']['+config[j]['shortname']+'] is undefined')
-					report[reportingZone][i][config[j]['shortname']] = 0;
+					report[reportingGroup][reportingZone][i][config[j]['shortname']] = 0;
 				}
 				//report[i][config[j]['shortname']] = currentValue['report'][config[j]['shortname']];
 				//console.log('Adding '+currentValue['report'][config[j]['shortname']]+' to '+config[j]['shortname']+'s for '+reportingZone);
-				report[reportingZone][i][config[j]['shortname']] += parseInt(currentValue['report'][config[j]['shortname']]);
+				report[reportingGroup][reportingZone][i][config[j]['shortname']] += parseInt(currentValue['report'][config[j]['shortname']]);
 			}
 
 			for(var j = 0; j < config.length; j++){
@@ -700,11 +718,11 @@ router.get('/missiontotals', function(req, res, next) {
 	startDate = lastMonday;
 
 	//Reversing, week 1 at top, week 6 at end
-	for(key in report){
+	/*for(key in report){
 		report[key].reverse();
-	}
+	}*/
 
-	totals.reverse();
+	//totals.reverse();
 
 	//console.log(JSON.stringify(report));
 	//console.log(JSON.stringify(totals));
