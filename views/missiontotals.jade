@@ -51,7 +51,11 @@ block content
 			- }
 
 	//Now for the zones...
-	- for (zone in report){
+	- for (group in report){
+	- if(group !== 'undefined'){
+	h2(class="captialize")=group.toLowerCase()
+	- for (zone in report[group]){
+	- if(zone !== 'undefined'){
 	h3(class="print-break")
 		a(class="captialize header-link" href="/zone/"+zone)=zone.toLowerCase()
 	h4(class="nobreak")=""+start.getFullYear().toString()+"-"+fullMonth(start).toString()+"-"+start.getDate().toString()+" to "+end.getFullYear().toString()+"-"+fullMonth(end)+"-"+end.getDate().toString()
@@ -63,11 +67,18 @@ block content
 				th=config[i].name
 				- }
 		tbody
-			- for(var i = 0; i < report[zone].length; i++){
+			- for(var i = 0; i < report[group][zone].length; i++){
 			tr
 				td="Week "+(i+1)
 				- for(var j = 0; j < config.length; j++){
-				td=report[zone][i][config[j]['shortname']]+' ('+Math.round((report[zone][i][config[j]['shortname']]/numComps[i][zone])*100)/100+')'
+				- if(typeof report[group][zone][i] !== 'undefined'){
+				td=report[group][zone][i][config[j]['shortname']]+' ('+Math.round((report[group][zone][i][config[j]['shortname']]/numComps[i][zone])*100)/100+')'
+				- }else{
+				td --
+				- }
 				- }
 			- }
-	-}
+	- }
+	- }
+	- }
+	- }
