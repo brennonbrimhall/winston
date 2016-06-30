@@ -1,0 +1,6 @@
+@media print{
+	body {
+		padding: 0mm;
+		font: 11pt "Lucida Grande", Helvetica, Arial, sans-serif;
+	}
+}
