@@ -95,7 +95,6 @@ router.get('/miles', function(req, res, next){
 
 router.get('/sendtext', function(req, res, next){
 	var dynamicRequire = require('../helpers/dynamicRequire.js');
-	var imos = require('../helpers/imos.js');
 
 	//If a message is not defined, that means that we did not request
 	//a text.
@@ -121,12 +120,14 @@ router.get('/sendtext', function(req, res, next){
 				if(zone != 'MISSION OFFICE'){
 					for(district in areas[group][zone]){
 						for(area in areas[group][zone][district]){
-							phones.push(imos.phoneNumberToEmail(areas[group][zone][district][area].phone));
+							phones.push(areas[group][zone][district][area].phone);
 						}
 					}
 				}
 			}
 		}
+
+		console.dir(phones);
 
 		//Now, initiating emails.
 		var mailer = require('../helpers/mailer.js');
@@ -135,10 +136,8 @@ router.get('/sendtext', function(req, res, next){
 			if(err){
 				console.log(err);
 				res.redirect('/sendtext?success=false');
-				res.render('text', {title: 'Text the Mission', alert: {type: 'danger', title: 'Mass Text Failed!', body: err}});
 			}else{
-				res.redirect('/sendtext?success=true')
-				res.render('text', {title: 'Text the Mission', alert: {type: 'success', title: 'Text successful!', body: 'Texting the mission was successful.'}});
+				res.redirect('/sendtext?success=true');
 			}
 		});
 	}

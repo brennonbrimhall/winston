@@ -29,8 +29,9 @@ module.exports = {
 
 		if(toNumber instanceof Array){//Send b
 			var phoneEmails = [];
-			for(number in toNumber){
-				phoneEmails.push(imos.phoneNumberToEmail(toNumber));
+			for(var i = 0; i < toNumber.length; i++){
+				console.log(imos.phoneNumberToEmail(toNumber[i]));
+				phoneEmails.push(imos.phoneNumberToEmail(toNumber[i]));
 			}
 
 			this.mail(phoneEmails, subject, text, callback);
