@@ -52,7 +52,7 @@ router.get('/miles', function(req, res, next){
 	var i = 0;
 	
 	for(group in areas){
-		for(zone in areas){
+		for(zone in areas[group]){
 			if(zone != "MISSION OFFICE"){
 				for (district in areas[group][zone]){
 					for (area in areas[group][zone][district]){
@@ -61,13 +61,13 @@ router.get('/miles', function(req, res, next){
 						data[i].zoneName = zone;
 						data[i].districtName = district;
 						data[i].areaName = area;
-						data[i].endingOdometer = 0;
-						data[i].estimated = 0;
+						data[i].endingOdometer = "--";
+						data[i].delta = "--";
 
 						//Getting ending miles from report
 						for(var j = 0; j < weeklyReport.length; j++){
-							if(areas[group][zone][district][area].phone == weeklyReport[j].phone){
-								data[i].endingOdometer = weeklyReport[j].report.miles;
+							if(areas[group][zone][district][area].phone === weeklyReport[j].phone){
+								data[i].endingOdometer = parseInt(weeklyReport[j].report.miles);
 							}
 						}
 
@@ -76,8 +76,8 @@ router.get('/miles', function(req, res, next){
 						var weeksToInterpolate = (d.getDate() - lastMonday.getDate())/7;
 
 						for(var j = 0; j < previousWeeklyReport.length; j++){
-							if(areas[group][zone][district][area].phone == previousWeeklyReport[j].phone){
-								data[i].estimated = data[i].endingOdometer + weeksToInterpolate*(data[i].endingOdometer - previousWeeklyReport[j].report.miles);
+							if(areas[group][zone][district][area].phone === previousWeeklyReport[j].phone){
+								data[i].delta = data[i].endingOdometer - parseInt(previousWeeklyReport[j].report.miles);
 							}
 						}
 

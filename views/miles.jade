@@ -48,5 +48,9 @@ block content
 				td=data[i].areaName
 				td=data[i].area.phone
 				td=data[i].endingOdometer
-				td=Math.round(data[i].estimated)
+				- if((typeof data[i].delta === "number") && (data[i].delta > 0)){
+				td=data[i].endingOdometer + data[i].delta
+				- }else{
+				td ?
+				- }
 			- }
