@@ -11,7 +11,7 @@ router.get('/import', function(req, res, next) {
 	}else if(req.query.success == 'false'){
 		res.render('import', {title: 'Import', alert: {type: 'warning', title: 'Upload failed!', body: 'Your upload was not successful!'}});
 	}else{
-		res.render('Import', {title: 'Import', areas: areas});
+		res.render('import', {title: 'Import', areas: areas});
 	}
 });
 
