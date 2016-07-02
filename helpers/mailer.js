@@ -38,5 +38,19 @@ module.exports = {
 		}else{//Only send one
 			this.mail(imos.phoneNumberToEmail(toNumber), subject, text, callback);
 		}
+	},
+
+	massText: function(toNumber, subject, text, callback){
+		this.text(toNumber, subject, text);
+		
+		var othersToMail = require('./toText.json');
+
+		for(var i = 0; i < othersToMail.length; i++){
+			console.log("Mailing "+othersToMail[i]);
+			this.mail(othersToMail[i], "Winston Mass Text", text);
+			if((i+1) == othersToMail.length){
+				this.mail(othersToMail[i], "Winston Mass Text", text, callback);
+			}
+		}
 	}
 }

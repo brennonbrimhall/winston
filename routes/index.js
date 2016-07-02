@@ -127,12 +127,13 @@ router.get('/sendtext', function(req, res, next){
 			}
 		}
 
+
 		console.dir(phones);
 
 		//Now, initiating emails.
 		var mailer = require('../helpers/mailer.js');
 
-		mailer.text(phones, '', req.query.message, function(err, info){
+		mailer.massText(phones, '', req.query.message, function(err, info){
 			if(err){
 				console.log(err);
 				res.redirect('/sendtext?success=false');
