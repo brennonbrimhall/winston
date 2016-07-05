@@ -83,6 +83,9 @@ block content
 						img(src="/images/"+pic+".jpeg" class="img-rounded smr")
 						div
 							- var numDots = Math.ceil(transferPlanningRecord['Weeks in Area']/6);
+							- if(isNaN(numDots)){
+								- numDots = 1;
+							- }
 							- for(var j = 0; j < numDots; j++){
 							span(class="glyphicon glyphicon-one-fine-dot")
 							- }
