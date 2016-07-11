@@ -47,11 +47,11 @@ n.on('end', function(){
 	//Verify that this is a Text Message coming in as an email.  We
 	//will do that by seeing if the first three characters in the
 	//subject line reads "SMS"
-	if(mail.subject.substring(0, 3) == 'SMS'){
+	if(mail.subject.substring(0, 3) === 'SMS'){
 		//Then we're good!
 
 		//If it is Monday, accept the text:
-		if((new Date()).getUTCDay() == 1){
+		if((new Date()).getDay() === 1){
 			var phoneNumber = mail.from[0].name;
 			
 			//Formatting the string to match up with iMOS:
@@ -97,9 +97,11 @@ n.on('end', function(){
 			var valid = true;
 			var indicatorsMissing=[];
 
+			console.dir(report);
+
 			reportConfig.forEach(function(currentValue, index, array){
-				//Do we have a value for each of the indicators in the config?
-				if(typeof report[currentValue.shortname] === 'undefined'){
+				//Do we have a numerical value for each of the indicators in the config?
+				if(typeof report[currentValue.shortname] === 'undefined' || isNaN(report[currentValue.shortname])){
 					valid = false;
 					indicatorsMissing.push(currentValue.shortname);
 					console.log('Report invalid');
@@ -112,14 +114,15 @@ n.on('end', function(){
 				//Save file
 				var today = new Date();
 
+				var numbers;
 				try{
 					//Get the file that holds all of this week's numbers reports
-					var numbers = dynamicRequire.readWeeklyReport(today);
+					numbers = dynamicRequire.readWeeklyReport(today);
 					console.log('Was able to load up previous report file.');
 				}catch(err){
 					//Init empty array.  We will create this file.
 					console.log(err);
-					var numbers = [];
+					numbers = [];
 				}
 
 				//Adding it to the numbers reports
@@ -150,12 +153,21 @@ n.on('end', function(){
 				dynamicRequire.writeWeeklyReport(today, numbers);
 
 				var mailer = require('./helpers/mailer.js');
+
 				if(needToOverwrite){
-					mailer.text(phoneNumber, '', 'Thank your for submitting your numbers report again.  I was able to successfully process it and overwrite your previous report.  Be sure to submit your report again through the missionary portal.  Love, Winston');
+					mailer.mail(mail.from[0].address, '', 'Thank your for submitting your numbers report again.  I was able to successfully process it and overwrite your previous report.  Be sure to submit your report again through the missionary portal.  Love, Winston');
 					console.log('Sent acknowledgement text for overwrite');
 				}else{
-					mailer.text(phoneNumber, '', 'Thank your for your numbers report.  Be sure to submit your report again through the missionary portal.  Love, Winston');	
-					console.log('Sent acknowledgement text');
+					if((new Date).getHours() > 9){
+						mailer.mail(mail.from[0].address, '', 'My dear missionary, you are LATE with your report -- you must submit it after the mission prayer and before 9:15!  I did, however, process your report.  Be sure to submit your report again through the missionary portal.  Love, Winston');	
+						console.log('Sent acknowledgement text');
+					}else if ((new Date).getHours() < 9){
+						mailer.mail(mail.from[0].address, '', 'My dear missionary, you are EARLY with your report -- you must submit it after the mission prayer and before 9:15!  I did, however, process your report.  Be sure to submit your report again through the missionary portal.  Love, Winston');	
+						console.log('Sent acknowledgement text');
+					}else{
+						mailer.mail(mail.from[0].address, '', 'Thank your for your numbers report.  Be sure to submit your report again through the missionary portal.  Love, Winston');	
+						console.log('Sent acknowledgement text');
+					}
 				}
 
 			}else{
