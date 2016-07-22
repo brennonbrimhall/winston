@@ -6,9 +6,19 @@ block title
 block content
 	div(class="panel panel-default")
 		div(class="panel-heading")
+			h3(class="panel-title") Import "Current Organization - Excel" Report
+		div(class="panel-body")
+			p Generate area list from the Current Organization - Excel iMOS report.  Used for just about everything.
+			form(action="/import/roster", method="post", enctype="multipart/form-data")
+				div(class="btn-group" role="group")
+					span(class="btn btn-default btn-file") Browse
+						input(type="file", class="btn btn-default", name="uploadroster", id="uploadroster")
+					input(type="submit" class="btn btn-primary" value="Upload" name="Upload")
+	div(class="panel panel-default")
+		div(class="panel-heading")
 			h3(class="panel-title") Import "Organization Roster - Excel" Report
 		div(class="panel-body")
-			p Import the Organization Roster from iMOS.  Used for just about everything.
+			p Import the Organization Roster from iMOS.  Used to generate SMRs.
 			form(action="/import/organization-roster", method="post", enctype="multipart/form-data")
 				div(class="btn-group" role="group")
 					span(class="btn btn-default btn-file") Browse
