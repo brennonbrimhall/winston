@@ -33,6 +33,10 @@ module.exports = {
 		return this.read('../organization-roster/current.json');
 	},
 
+	readCars: function(){
+		return this.read('../cars/current.json');
+	},
+
 	readTransferPlanning: function(){
 		return this.read('../transfer-planning/current.json');
 	},
@@ -78,6 +82,12 @@ module.exports = {
 		var date = new Date();
 		this.write('../organization-roster/current.json', object);
 		this.write('../organization-roster/'+date.getFullYear().toString()+'-'+(date.getMonth()+1).toString()+'-'+date.getDate().toString()+'.json', object);
+	},
+
+	writeCars: function(object){
+		var date = new Date();
+		this.write('../cars/current.json', object);
+		this.write('../cars/'+date.getFullYear().toString()+'-'+(date.getMonth()+1).toString()+'-'+date.getDate().toString()+'.json', object);
 	},
 
 	writeTransferPlanning: function(object){

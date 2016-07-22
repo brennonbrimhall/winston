@@ -36,6 +36,16 @@ block content
 					input(type="submit" class="btn btn-primary" value="Upload" name="Upload")
 	div(class="panel panel-default")
 		div(class="panel-heading")
+			h3(class="panel-title") Import "Vehicle Assignments" Report
+		div(class="panel-body")
+			p Import the Vehicle Assignments Report from iMOS.  Used to generate SMRs and WARs.
+			form(action="/import/vehicle-assignments", method="post", enctype="multipart/form-data")
+				div(class="btn-group" role="group")
+					span(class="btn btn-default btn-file") Browse
+						input(type="file", class="btn btn-default", name="uploadvehicleassignments", id="uploadvehicleassignments")
+					input(type="submit" class="btn btn-primary" value="Upload" name="Upload")
+	div(class="panel panel-default")
+		div(class="panel-heading")
 			h3(class="panel-title") Import Picture for Missionary
 		div(class="panel-body")
 			p Import a picture for a missionary.  Used to generate SMRs.

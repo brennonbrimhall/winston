@@ -32,7 +32,7 @@ block content
 			div(class="panel-body")
 				div(class="row")
 					- for(var i = 0; i < areas[group][zone][district][area].missionaries.length; i++){
-					- var transferPlanningRecord = {}, transferOrganizationRosterRecord = {};
+					- var transferPlanningRecord = {}, transferOrganizationRosterRecord = {}, carsRecord = {};
 
 					- var namesAreEqual = function(name1, name2){
 						- if(typeof name1 === 'undefined'){
@@ -69,16 +69,28 @@ block content
 							- organizationRosterRecord = organizationRoster[j];
 						- }
 					- }
+					- for(var j = 0; j < cars.length; j++){
+						-if(namesAreEqual(cars[j]["Area"], area)){
+							-carsRecord = cars[j];
+						- }
+					- }
 					- if(i == 0){
 					div(class="col-xs-"+(12-(3*areas[group][zone][district][area].missionaries.length)))
 						ul
 							li=areas[group][zone][district][area].phone
 							- if(organizationRosterRecord['Area Address'] != ''){
 							li
-								div
+								div(class="margin-top")
 									p(class="no-margin")=organizationRosterRecord['House Name']
 									p(class="no-margin")=organizationRosterRecord['Street']
-									p(class="no-margin")=organizationRosterRecord['City']+","+organizationRosterRecord['State/Province']+" "+organizationRosterRecord['Postal Code']
+									p(class="no-margin")=organizationRosterRecord['City']+", "+organizationRosterRecord['State/Province']+" "+organizationRosterRecord['Postal Code']
+							- }
+							- if(typeof carsRecord !== "undefined" && carsRecord !== null && !(Object.keys(carsRecord).length === 0 && carsRecord.constructor === Object)){
+							li
+								div(class="margin-top")
+									p(class="no-margin captialize")=carsRecord["Make"].toLowerCase()+" "+carsRecord["Model"].toLowerCase()+" ("+carsRecord["Vin"]+"/"+carsRecord["License Plate"]+")"
+									- var weeklyAllotment = parseInt(carsRecord["Monthly Allowed"]*12/52)
+									p(class="no-margin")=weeklyAllotment.toString()+" "+" miles allotted per week."
 							- }
 							
 					- }

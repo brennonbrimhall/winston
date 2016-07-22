@@ -104,6 +104,10 @@ router.post('/import/roster', function(req, res, next){
 					roster[data[i]['Missionary ID']].position = 'Assistant to the President';
 				}else if(data[i]['Position'] == '(DL)'){
 					roster[data[i]['Missionary ID']].position = 'District Leader';
+				}else if(data[i]['Position'] == '(TR)'){
+					roster[data[i]['Missionary ID']].position = 'Trainer';
+				}else if(data[i]['Position'] == '(SA)'){
+					roster[data[i]['Missionary ID']].position = 'Special Assignment';
 				}
 
 				roster[data[i]['Missionary ID']].phone = data[i]['Phone'];
@@ -168,7 +172,7 @@ router.post('/import/roster', function(req, res, next){
 		dynamicRequire.writeRoster(roster);
 		dynamicRequire.writeAreas(areas);
 
-		res.render('import', { title: 'Areas', alert: {type: 'success', title: 'Upload successful!', body: 'Your upload of '+req.files.uploadroster.filename+' was successful!'} });
+		res.render('import', { title: 'Areas', alert: {type: 'success', title: 'Upload successful!', body: 'Your upload of '+req.files.uploadroster.filename+' for the Companionship Roster was successful!'} });
 	}else{
 		res.render('import', { title: 'Areas', alert: {type: 'danger', title: 'Upload failed!', body: 'I\'m sorry, but your upload of '+req.files.uploadroster.filename+' was unsuccessful.  Are you sure that it is a .xlsx file?'} });
 	}
@@ -289,7 +293,63 @@ router.post('/import/organization-roster', function(req, res, next){
 		console.dir(data);
 		//Data already is in usable form! :)
 		dynamicRequire.writeOrganizationRoster(data);
-		res.render('import', { title: 'Import', alert: {type: 'success', title: 'Upload successful!', body: 'Your upload of '+req.files.uploadorganizationroster.filename+' was successful!'} });
+		res.render('import', { title: 'Import', alert: {type: 'success', title: 'Upload successful!', body: 'Your upload of '+req.files.uploadorganizationroster.filename+' for the Organization Roster was successful!'} });
+	}else{
+		res.redirect('/import?success=false');
+	}
+
+});
+
+router.post('/import/vehicle-assignments', function(req, res, next){
+	var dynamicRequire = require('../helpers/dynamicRequire.js');
+	//Load the file into our database!
+	//The roster is saved, open and parse with module xlsx
+	
+	//Verifying that we are looking at an excel file!
+	console.dir(req.files.uploadvehicleassignments);
+	if(req.files.uploadvehicleassignments.mimetype == 'application/vnd.ms-excel'){
+		//Parsing it with xlsx module
+		//This code taken from http://stackoverflow.com/questions/30859901/parse-xlsx-with-node-and-create-json
+		
+		//Parsing roster:
+		var workbook = xlsx.readFile(req.files.uploadvehicleassignments.file);
+		var worksheet = workbook.Sheets['Sheet1'];
+
+		var headers = {};
+		var data = [];
+		for(z in worksheet) {
+			if(z[0] === '!') continue;
+			//parse out the column, row, and value
+			var tt = 0;
+			for (var i = 0; i < z.length; i++) {
+				if (!isNaN(z[i])) {
+					tt = i;
+					break;
+				}
+			};
+			var col = z.substring(0,tt);
+			var row = parseInt(z.substring(tt));
+			var value = worksheet[z].v;
+
+			//store header names
+			if(row == 2 && value) { //Because of how iMOS formats the report, we need to have the headers be row 2.
+				headers[col] = value;
+				continue;
+			}
+
+			if(!data[row]) data[row]={};
+			data[row][headers[col]] = value;
+		}
+		//drop those first two rows which are empty
+		data.shift();
+		data.shift();
+		data.shift(); //drop a null top record
+		console.log(data);
+
+		console.dir(data);
+		//Data already is in usable form! :)
+		dynamicRequire.writeCars(data);
+		res.render('import', { title: 'Import', alert: {type: 'success', title: 'Upload successful!', body: 'Your upload of '+req.files.uploadvehicleassignments.filename+' for Vehicle Assignments was successful!'} });
 	}else{
 		res.redirect('/import?success=false');
 	}

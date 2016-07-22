@@ -150,6 +150,7 @@ router.get('/reports/smr', function(req, res, next) {
 	var areas = dynamicRequire.readAreas();
 	var roster = dynamicRequire.readRoster();
 	var transferPlanning = dynamicRequire.readTransferPlanning();
+	var cars = dynamicRequire.readCars();
 	//var transferBoard = dynamicRequire.readTransferBoard();
 	var organizationRoster = dynamicRequire.readOrganizationRoster();
 
@@ -168,7 +169,7 @@ router.get('/reports/smr', function(req, res, next) {
 
 	//console.dir(transferPlanning);
 	console.log(reportForZone);
-	res.render('smr', {title: 'Mission Directory', areas: areas, roster: roster, transferPlanning: transferPlanning, organizationRoster: organizationRoster, reportForZone: reportForZone, reportsUpdated: reportsUpdated});
+	res.render('smr', {title: 'Mission Directory', areas: areas, roster: roster, cars: cars, transferPlanning: transferPlanning, organizationRoster: organizationRoster, reportForZone: reportForZone, reportsUpdated: reportsUpdated});
 });
 
 module.exports = router;

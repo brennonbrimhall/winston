@@ -459,6 +459,7 @@ router.get('/zone/:zone/war', function (req, res, next){
 	var dynamicRequire = require('../helpers/dynamicRequire.js');
 	var areas = dynamicRequire.readAreas();
 	var config = dynamicRequire.readWeeklyReportConfig();
+	var cars = dynamicRequire.readCars();
 
 	var zoneData = {};
 
@@ -473,7 +474,8 @@ router.get('/zone/:zone/war', function (req, res, next){
 	res.render('zone-war', 
 		{title: req.params.zone, 
 			zoneData: zoneData,
-			config: config
+			config: config,
+			cars: cars
 		});
 });
 

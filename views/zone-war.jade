@@ -5,7 +5,7 @@ block scripts
 
 block content	
 	- for(var w = 0; w < 6; w++){
-	h3(class="captialize print-break")=title.toLowerCase()+" - Zone Weekly Accountablility Report (Week "+(w+1)+")"
+	h3(class="captialize print-break")=title.toLowerCase()+" Zone - Weekly Accountablility Report (Week "+(w+1)+")"
 
 	
 	table(class="table table-bordered table-condensed")
@@ -38,18 +38,24 @@ block content
 		thead
 			tr
 				th Miles
+				- var k = 0;
 				- for(var district in zoneData){
 				- for(var area in zoneData[district]){
-				th=area
+				- var carRecord = '';
+				- for(var j = 0; j < cars.length; j++){
+				-if(cars[j]["Area"] === area){
+				- carRecord = cars[j];
+				- k++
+				th(class="captialize")=area.toLowerCase()
+				- }
+				- }
 				- }
 				- }
 		tbody
 			tr
 				td Ending Odometer
-				- for(var district in zoneData){
-				- for(var area in zoneData[district]){
+				- for(var j = 0; j < k; j++){
 				td=" "
-				- }
 				- }
 
 	table(class="table table-bordered table-condensed")
