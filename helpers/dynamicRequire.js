@@ -6,7 +6,7 @@ module.exports = {
 	},
 
 	readWeeklyReport: function(date){
-		return this.read('../weeklyreports/'+date.getFullYear().toString()+'-'+(date.getMonth()+1).toString()+'-'+date.getDate().toString()+'.json')
+		return this.read('../weeklyreports/'+date.getFullYear().toString()+'-'+(date.getMonth()+1).toString()+'-'+date.getDate().toString()+'.json');
 	},
 
 	readWeeklyReportConfig: function(){
@@ -25,8 +25,12 @@ module.exports = {
 		return this.read('../buds/buds.json');
 	},
 
-	readTransferBoard: function(){
+	/*readTransferBoard: function(){
 		return this.read('../board/current.json');
+	},*/
+
+	readOrganizationRoster: function(){
+		return this.read('../organization-roster/current.json');
 	},
 
 	readTransferPlanning: function(){
@@ -35,8 +39,10 @@ module.exports = {
 
 	write: function(fileName, object){
 		var jsonfile = require('jsonfile');
+
 		jsonfile.writeFileSync(__dirname+'/'+fileName, object);
 	},
+
 
 	writeWeeklyReport: function(date, object){
 		this.write('../weeklyreports/'+date.getFullYear().toString()+'-'+(date.getMonth()+1).toString()+'-'+date.getDate().toString()+'.json', object);
@@ -62,10 +68,16 @@ module.exports = {
 		this.write('../buds/buds.json', object);
 	},
 
-	writeTransferBoard: function(object){
+	/*writeTransferBoard: function(object){
 		var date = new Date();
 		this.write('../board/current.json', object);
 		this.write('../board/'+date.getFullYear().toString()+'-'+(date.getMonth()+1).toString()+'-'+date.getDate().toString()+'.json', object);
+	},*/
+
+	writeOrganizationRoster: function(object){
+		var date = new Date();
+		this.write('../organization-roster/current.json', object);
+		this.write('../organization-roster/'+date.getFullYear().toString()+'-'+(date.getMonth()+1).toString()+'-'+date.getDate().toString()+'.json', object);
 	},
 
 	writeTransferPlanning: function(object){
@@ -86,8 +98,13 @@ module.exports = {
 		return this.getDateModified('../areas/current.json');
 	},
 
-	getTransferBoardDateModified: function(){
+	/*getTransferBoardDateModified: function(){
 		var date = this.getDateModified('../board/current.json');
+		return date;
+	},*/
+
+	getOrganizationRosterDateModified: function(){
+		var date = this.getDateModified('../organization-roster/current.json');
 		return date;
 	},
 

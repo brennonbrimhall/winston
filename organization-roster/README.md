@@ -1,0 +1,1 @@
+This directory used to store .JSON files of organizational roster reports from iMOS.
