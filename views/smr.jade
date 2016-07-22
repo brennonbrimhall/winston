@@ -17,8 +17,8 @@ block content
 		- var date = new Date()
 		h3="Generated "+date.getFullYear().toString()+'-'+(date.getMonth()+1).toString()+'-'+date.getDate().toString()+ " from"
 			ul
-				li="Companionship Roster - last imported "+reportsUpdated.areas.getFullYear().toString()+'-'+(reportsUpdated.areas.getMonth()+1).toString()+'-'+reportsUpdated.areas.getDate().toString()
-				li="Transfer Board - last imported "+reportsUpdated.board.getFullYear().toString()+'-'+(reportsUpdated.board.getMonth()+1).toString()+'-'+reportsUpdated.board.getDate().toString()
+				li="Companionship Organization - last imported "+reportsUpdated.areas.getFullYear().toString()+'-'+(reportsUpdated.areas.getMonth()+1).toString()+'-'+reportsUpdated.areas.getDate().toString()
+				li="Organization Roster - last imported "+reportsUpdated.organizationRoster.getFullYear().toString()+'-'+(reportsUpdated.organizationRoster.getMonth()+1).toString()+'-'+reportsUpdated.organizationRoster.getDate().toString()
 				li="Transfer Planning - last imported "+reportsUpdated.transferPlanning.getFullYear().toString()+'-'+(reportsUpdated.transferPlanning.getMonth()+1).toString()+'-'+reportsUpdated.transferPlanning.getDate().toString()
 
 		- for(group in areas){
@@ -32,9 +32,14 @@ block content
 			div(class="panel-body")
 				div(class="row")
 					- for(var i = 0; i < areas[group][zone][district][area].missionaries.length; i++){
-					- var transferPlanningRecord = {}, transferBoardRecord = {};
+					- var transferPlanningRecord = {}, transferOrganizationRosterRecord = {};
 
 					- var namesAreEqual = function(name1, name2){
+						- if(typeof name1 === 'undefined'){
+							- return false;
+						- }else if(typeof name2 === 'undefined'){
+							- return false;
+						- }
 						- name1 = name1.toLowerCase();
 
 						- var bindex1 = name1.indexOf('-');
@@ -59,17 +64,21 @@ block content
 							- transferPlanningRecord = transferPlanning[j];
 						- }
 					- }
-					- for(var j = 0; j < transferBoard.length; j++){
-						- if(namesAreEqual(transferBoard[j]['Missionary Name'], areas[group][zone][district][area].missionaries[i])){
-							- transferBoardRecord = transferBoard[j];
+					- for(var j = 0; j < organizationRoster.length; j++){
+						- if(namesAreEqual(organizationRoster[j]['Missionary Name'], areas[group][zone][district][area].missionaries[i])){
+							- organizationRosterRecord = organizationRoster[j];
 						- }
 					- }
 					- if(i == 0){
 					div(class="col-xs-"+(12-(3*areas[group][zone][district][area].missionaries.length)))
 						ul
 							li=areas[group][zone][district][area].phone
-							- if(transferBoardRecord['Area Address'] != ''){
-							li=transferBoardRecord['Area Address']	
+							- if(organizationRosterRecord['Area Address'] != ''){
+							li
+								div
+									p(class="no-margin")=organizationRosterRecord['House Name']
+									p(class="no-margin")=organizationRosterRecord['Street']
+									p(class="no-margin")=organizationRosterRecord['City']+","+organizationRosterRecord['State/Province']+" "+organizationRosterRecord['Postal Code']
 							- }
 							
 					- }
