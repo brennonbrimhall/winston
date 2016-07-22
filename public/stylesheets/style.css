@@ -76,3 +76,10 @@ h2 {
 	float: right;
 	margin: 10px;
 }
+
+.no-margin {
+	margin-left: 0px;
+	margin-bottom: 0px;
+	margin-right: 0px;
+	margin-top: 0px;
+}
