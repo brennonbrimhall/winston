@@ -720,11 +720,11 @@ router.get('/missiontotals', function(req, res, next) {
 	startDate = lastMonday;
 
 	//Reversing, week 1 at top, week 6 at end
-	/*for(key in report){
+	for(key in report){
 		report[key].reverse();
-	}*/
+	}
 
-	//totals.reverse();
+	totals.reverse();
 
 	//console.log(JSON.stringify(report));
 	//console.log(JSON.stringify(totals));
