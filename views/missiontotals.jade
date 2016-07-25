@@ -68,11 +68,13 @@ block content
 				- }
 		tbody
 			- for(var i = 0; i < report[group][zone].length; i++){
+			- var iterated = report[group][zone].length-1
+			- iterated = iterated - i
 			tr
 				td="Week "+(i+1)
 				- for(var j = 0; j < config.length; j++){
 				- if(typeof report[group][zone][i] !== 'undefined'){
-				td=report[group][zone][i][config[j]['shortname']]+' ('+Math.round((report[group][zone][i][config[j]['shortname']]/numComps[i][zone])*100)/100+')'
+				td=report[group][zone][iterated][config[j]['shortname']]+' ('+Math.round((report[group][zone][i][config[j]['shortname']]/numComps[i][zone])*100)/100+')'
 				- }else{
 				td --
 				- }
