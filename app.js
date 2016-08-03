@@ -22,8 +22,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 //Initialize Busboy for file uploads
 busboy.extend(app, {
-    upload: true,
-    path: path.join(__dirname, 'uploads')
+	upload: true,
+	path: path.join(__dirname, 'uploads')
 });
 
 //Turn on mail-notifier
@@ -155,7 +155,7 @@ n.on('end', function(){
 				var mailer = require('./helpers/mailer.js');
 
 				if(needToOverwrite){
-					mailer.mail(mail.from[0].address, '', 'Thank your for submitting your numbers report again.  I was able to successfully process it and overwrite your previous report.  Be sure to submit your report again through the missionary portal.  Love, Winston');
+					mailer.mail(mail.from[0].address, '', 'Thank you for submitting your numbers report again.  I was able to successfully process it and overwrite your previous report.  Be sure to submit your report again through the missionary portal.  Love, Winston');
 					console.log('Sent acknowledgement text for overwrite');
 				}else{
 					if((new Date).getHours() > 9){
@@ -165,7 +165,7 @@ n.on('end', function(){
 						mailer.mail(mail.from[0].address, '', 'My dear missionary, you are EARLY with your report -- you must submit it after the mission prayer and before 9:15!  I did, however, process your report.  Be sure to submit your report again through the missionary portal.  Love, Winston');	
 						console.log('Sent acknowledgement text');
 					}else{
-						mailer.mail(mail.from[0].address, '', 'Thank your for your numbers report.  Be sure to submit your report again through the missionary portal.  Love, Winston');	
+						mailer.mail(mail.from[0].address, '', 'Thank you for your numbers report.  Be sure to submit your report again through the missionary portal.  Love, Winston');	
 						console.log('Sent acknowledgement text');
 					}
 				}
