@@ -11,6 +11,7 @@
     "debug": "~2.2.0",
     "express": "~4.13.1",
     "express-busboy": "2.5.x",
+    "ipify": "^1.1.0",
     "jade": "~1.11.0",
     "jsonfile": "2.3.1",
     "mail-notifier": "0.3.0",
