@@ -59,19 +59,28 @@ block content
 
 					- }
 					
-					- for(var j = 0; j < transferPlanning.length; j++){
+					- var found = false
+
+					- for(var j = 0; (j < transferPlanning.length && !found); j++){
 						- if(namesAreEqual(transferPlanning[j]['Missionary Name'], areas[group][zone][district][area].missionaries[i])){
 							- transferPlanningRecord = transferPlanning[j];
+							- found = true;
 						- }
 					- }
-					- for(var j = 0; j < organizationRoster.length; j++){
+
+					- found = false
+					- for(var j = 0; (j < organizationRoster.length && !found); j++){
 						- if(namesAreEqual(organizationRoster[j]['Missionary Name'], areas[group][zone][district][area].missionaries[i])){
 							- organizationRosterRecord = organizationRoster[j];
+							- found = true;
 						- }
 					- }
-					- for(var j = 0; j < cars.length; j++){
+
+					- found = false
+					- for(var j = 0; (j < cars.length && !found); j++){
 						-if(namesAreEqual(cars[j]["Area"], area)){
 							-carsRecord = cars[j];
+							- found = true;
 						- }
 					- }
 					- if(i == 0){
