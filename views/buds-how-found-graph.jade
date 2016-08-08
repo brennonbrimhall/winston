@@ -1,0 +1,12 @@
+extends layout
+
+block scripts
+	script(src="/javascripts/how-found-chart.js")
+
+block title
+	h1(class="nobreak") Methods of Finding
+
+block content
+	div(class="print-together")
+		h1(class="print-only") Methods of Finding
+		canvas(id="how-found")

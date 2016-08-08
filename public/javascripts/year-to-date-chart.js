@@ -15,7 +15,7 @@ var globalColors = {
 
 };
 
-$.getJSON('/buds/graph-data', function(data){
+$.getJSON('/buds/year-to-date-baptisms-data', function(data){
 	//Main graph
 	var unitsForStakeTotals = [];
 	var baptismsForStakeTotals = [];

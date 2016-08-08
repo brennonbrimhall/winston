@@ -87,3 +87,7 @@ h2 {
 .margin-top {
 	margin-top: 5px;
 }
+
+.print-only {
+	display: none;
+}

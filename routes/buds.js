@@ -152,14 +152,18 @@ router.get('/buds/view', function(req, res, next){
 	res.render('buds-view', {title: 'View BUDs', buds: buds, units: units, roster: roster});
 });
 
-router.get('/buds/graph', function(req, res, next){
+router.get('/buds/year-to-date-baptisms-graph', function(req, res, next){
 	var dynamicRequire = require('../helpers/dynamicRequire.js');
 	var units = dynamicRequire.read('../buds/units.json');
 
-	res.render('buds-graph', {title: 'Baptisms Chart', units: units});
+	res.render('buds-bap-graph', {title: 'Baptisms Chart', units: units});
 });
 
-router.get('/buds/graph-data', function(req, res, next){
+router.get('/buds/how-found-graph', function(req, res, next){
+	res.render('buds-how-found-graph', {title: 'How Found Chart'});
+});
+
+router.get('/buds/year-to-date-baptisms-data', function(req, res, next){
 	//Make data object to be loaded by AJAX to view chart.
 	var dynamicRequire = require('../helpers/dynamicRequire.js');
 
@@ -202,6 +206,41 @@ router.get('/buds/graph-data', function(req, res, next){
 
 	res.json({total: total, units: units});
 });
+
+router.get('/buds/how-found-data', function(req, res, next){
+	var dynamicRequire = require('../helpers/dynamicRequire.js');
+	var buds = dynamicRequire.readBUDs();
+	var howFoundData = {};
+	howFoundData.F = 0;
+	howFoundData.L = 0;
+	howFoundData.M = 0;
+	howFoundData.O = 0;
+	howFoundData.P = 0;
+	howFoundData.S = 0;
+	howFoundData.U = 0;
+	howFoundData.X = 0;
+	for(var i = 0; i < buds.length; i++){
+		var method = buds[i].method.toLowerCase();
+		if(method === "f"){
+			howFoundData.F++;
+		}else if(method === "l"){
+			howFoundData.L++;
+		}else if(method === "m"){
+			howFoundData.M++;
+		}else if(method === "o"){
+			howFoundData.O++;
+		}else if(method === "p"){
+			howFoundData.P++;
+		}else if(method === "s"){
+			howFoundData.S++;
+		}else if(method === "u"){
+			howFoundData.U++;
+		}else{
+			howFoundData.X++;
+		}
+	}
+	res.json(howFoundData);
+})
 
 router.get('/buds/year-to-date-baptisms', function(req, res, next){
 	var dynamicRequire = require('../helpers/dynamicRequire.js');

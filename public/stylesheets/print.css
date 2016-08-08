@@ -37,4 +37,8 @@
 	.print-together{
         page-break-inside: avoid;
 	}
+
+	.print-only {
+		display: block;
+	}
 }
