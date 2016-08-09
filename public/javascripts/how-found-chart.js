@@ -37,6 +37,15 @@ $.getJSON('/buds/how-found-data', function(data){
 		data.U,
 		data.X
 	];
+
+	var total = 0;
+	for(var i = 0; i < howFoundData.length; i++){
+		total += howFoundData[i];
+	}
+	for(var i = 0; i < howFoundData.length; i++){
+		labels[i] = labels[i]+" ("+String(Math.round(howFoundData[i]/total*100))+"%)"
+	}
+
 	var colorsForMethod = [];
 
 	for(var i = 0; i < howFoundData.length; i++){
@@ -59,43 +68,10 @@ $.getJSON('/buds/how-found-data', function(data){
 		scaleSteps: 1,
 		scaleStartValue: 0,
 		options: {
-			legend: {
-				display: false
-			},
 			animation: {
-				duration: 0,
-				onComplete: function () {
-					var ctx = this.chart.ctx;
-					ctx.font = "20px "+Chart.helpers.fontString(Chart.defaults.global.defaultFontFamily, 'normal', Chart.defaults.global.defaultFontFamily);
-					console.log(ctx.font);
-					ctx.textAlign = 'center';
-					ctx.textBaseline = 'bottom';
-
-					this.data.datasets.forEach(function (dataset) {
-
-					for (var i = 0; i < dataset.data.length; i++) {
-						var model = dataset._meta[Object.keys(dataset._meta)[0]].data[i]._model,
-							total = dataset._meta[Object.keys(dataset._meta)[0]].total,
-							mid_radius = model.innerRadius + (model.outerRadius - model.innerRadius)/2,
-							start_angle = model.startAngle,
-							end_angle = model.endAngle,
-							mid_angle = start_angle + (end_angle - start_angle)/2;
-
-						var x = mid_radius * Math.cos(mid_angle)*1.8;
-						var y = mid_radius * Math.sin(mid_angle)*1.8;
-
-						ctx.fillStyle = '#000';
-						var percent = String(Math.round(dataset.data[i]/total*100)) + "%";
-						ctx.fillText(labels[i], model.x + x, model.y + y);
-						// Display percent in another line, line break doesn't work for fillText
-						
-						ctx.fillText(percent, model.x + x, model.y + y + 15);
-						console.log(i+"\t "+labels[i]);
-					}
-					});
-				}
+				duration: 0
 			}
 		}
 	})
-	//window.print();
+	window.print();
 });
